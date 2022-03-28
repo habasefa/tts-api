@@ -72,6 +72,10 @@ const userLogin = async (req, res, next) => {
       where: {
         email: email,
       },
+      include: {
+        tutor: true,
+        parent: true,
+      },
     });
     if (!user) {
       return res.status(404).json({
@@ -110,6 +114,8 @@ const userLogin = async (req, res, next) => {
         id: user.id,
         email: user.email,
         role: user.role,
+        tutor: user.tutor,
+        parent: user.parent,
       },
     });
   } catch (error) {

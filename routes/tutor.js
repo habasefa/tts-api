@@ -39,12 +39,12 @@ router.get("/", check_auth, async (req, res, next) => {
   }
 });
 
-router.get("/:email", check_auth, async (req, res, next) => {
-  const { email } = req.params;
+router.get("/:id", check_auth, async (req, res, next) => {
+  const { id } = req.params;
   try {
     const user = await prisma.tutor.findUnique({
       where: {
-        email: email,
+        id: id,
       },
       include: {
         students: true,
@@ -53,7 +53,7 @@ router.get("/:email", check_auth, async (req, res, next) => {
       },
     });
     if (user) {
-      res.json({ success: true, message: `tutor ${email}`, user: user });
+      res.json({ success: true, message: `tutor ${id}`, user: user });
     } else {
       res.json({ success: false, message: `Tutor not found` });
     }

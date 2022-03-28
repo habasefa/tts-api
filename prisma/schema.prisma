@@ -11,10 +11,12 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique @db.VarChar(50)
+  id       Int     @id @default(autoincrement())
+  email    String  @unique @db.VarChar(50)
   password String
-  role     Role   @default(TUTOR)
+  role     Role    @default(TUTOR)
+  tutor    Tutor?
+  parent   Parent?
 }
 
 model Tutor {
@@ -53,6 +55,8 @@ model Tutor {
   students            Student[]
   role                Role      @default(TUTOR)
   status              Status    @default(PENDING)
+  user                User?     @relation(fields: [userId], references: [id])
+  userId              Int?      @unique
 }
 
 model Job {
@@ -97,6 +101,8 @@ model Parent {
   students       Student[]
   role           Role      @default(PARENT)
   status         Status    @default(PENDING)
+  user           User?     @relation(fields: [userId], references: [id])
+  userId         Int?      @unique
 }
 
 model Admin {
@@ -107,9 +113,9 @@ model Admin {
 }
 
 model Student {
-  id                  Int      @id @default(autoincrement())
-  fullName            String   @db.VarChar(100)
-  nickName            String?  @db.VarChar(50)
+  id                  Int       @id @default(autoincrement())
+  fullName            String    @db.VarChar(100)
+  nickName            String?   @db.VarChar(50)
   gender              Gender
   birthDay            DateTime?
   subjects            String[]
@@ -122,11 +128,11 @@ model Student {
   idealTutor          String?
   workDays            Int?
   workHour            Int?
-  tutor               Tutor?   @relation(fields: [tutorId], references: [id])
+  tutor               Tutor?    @relation(fields: [tutorId], references: [id])
   tutorId             Int?
-  parent              Parent   @relation(fields: [parentId], references: [id])
+  parent              Parent    @relation(fields: [parentId], references: [id])
   parentId            Int
-  status              Status   @default(PENDING)
+  status              Status    @default(PENDING)
 }
 
 enum Gender {

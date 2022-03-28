@@ -37,19 +37,19 @@ router.get("/", check_auth, async (req, res, next) => {
   }
 });
 
-router.get("/:email", check_auth, async (req, res, next) => {
-  const { email } = req.params;
+router.get("/:id", check_auth, async (req, res, next) => {
+  const { id } = req.params;
   try {
     const user = await prisma.parent.findUnique({
       where: {
-        email: email,
+        id: id,
       },
       include: {
         students: true,
       },
     });
     if (user) {
-      res.json({ success: true, message: `user with ${email}`, user: user });
+      res.json({ success: true, message: `user with ${id}`, user: user });
     } else {
       res.json({ success: false, message: `parent not found` });
     }
