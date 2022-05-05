@@ -7,7 +7,7 @@ const check_role = require("../middlewares/check_role");
 
 const prisma = new PrismaClient();
 
-router.post("/", check_auth, async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const parent = await prisma.parent.create({
       data: {

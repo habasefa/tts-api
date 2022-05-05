@@ -121,7 +121,7 @@ const userLogin = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Unable to Login",
+      message: error.toString(),
     });
     next(error);
   }

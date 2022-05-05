@@ -9,7 +9,6 @@ const prisma = new PrismaClient();
 
 router.post(
   "/",
-  check_auth,
   //   check_role(["PARENT", "ADMIN"]),
   async (req, res, next) => {
     try {

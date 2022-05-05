@@ -92,7 +92,7 @@ model Report {
 model Parent {
   id             Int       @id @default(autoincrement())
   fullName       String    @db.VarChar(50)
-  email          String    @unique @db.VarChar(50)
+  email          String?    @unique @db.VarChar(50)
   phone1         String?   @db.VarChar(15)
   phone2         String?   @db.VarChar(15)
   location       String    @db.VarChar(50)
@@ -117,7 +117,7 @@ model Student {
   fullName            String    @db.VarChar(100)
   nickName            String?   @db.VarChar(50)
   gender              Gender
-  birthDay            DateTime?
+  age            Int?
   subjects            String[]
   grade               String?
   school              String?
