@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Job" ADD COLUMN     "workDays" INTEGER,
+ADD COLUMN     "workHour" INTEGER,
+ALTER COLUMN "title" DROP NOT NULL,
+ALTER COLUMN "subtitle" DROP NOT NULL,
+ALTER COLUMN "description" DROP NOT NULL;

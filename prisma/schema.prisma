@@ -25,7 +25,7 @@ model Tutor {
   email               String    @unique @db.VarChar(50)
   phone               String    @db.VarChar(15)
   gender              Gender
-  birthDay            DateTime?
+  age            Int?
   acadStatus          String?
   UEE                 Int?
   cGPA                Decimal?
@@ -61,29 +61,38 @@ model Tutor {
 
 model Job {
   id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(50)
-  subtitle    String   @db.VarChar(50)
+  title       String?   @db.VarChar(50)
+  subtitle    String?   @db.VarChar(50)
   subjects    String[]
   location    String
   grade       String   @db.VarChar(30)
-  description String
+  description String?
+  workDays            Int?
+  workHour            Int?
   tutors      Tutor[]
   status      Status   @default(PENDING)
 }
 
 model Report {
   id                Int      @id @default(autoincrement())
-  title             String   @db.VarChar(50)
-  subjectTutored    String[]
-  topicCovered      String?
-  envChallenge      String?
-  tuteeReadiness    String?
-  tutorialDelivery  String?
-  challengeSolution String?
-  howCanWeHelp      String?
-  quiz              String?
-  comment           String?
   professionality   String?
+  semiTotalHour     String?
+  noDays     String?
+  feedback     String?
+  envChallenge     String?
+  tuteeChallenge     String?
+  yourChallenge     String?
+  envResponse     String?
+  tuteeResponse     String?
+  yourResponse     String?
+  envHelp     String?
+  tuteeHelp     String?
+  yourHelp     String?
+  quiz              String?
+  assg              String?
+  test              String?
+  subjects              String?
+  topics              String?
   reportdate        DateTime @default(now())
   tutor             Tutor    @relation(fields: [tutorId], references: [id])
   tutorId           Int

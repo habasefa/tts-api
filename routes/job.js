@@ -1,13 +1,12 @@
 require("dotenv").config();
 const router = require("express").Router();
 const { PrismaClient } = require("@prisma/client");
-
 const check_auth = require("../middlewares/check_auth");
 const check_role = require("../middlewares/check_role");
 
 const prisma = new PrismaClient();
 
-router.post("/", async (req, res, next) => {
+router.post("/", check_auth, async (req, res, next) => {
   try {
     const job = await prisma.job.create({
       data: {
@@ -45,7 +44,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
         id: Number(id),
       },
       include: {
-        tutor: true,
+        tutors: true,
       },
     });
     if (user) {
@@ -60,14 +59,19 @@ router.get("/:id", check_auth, async (req, res, next) => {
 
 router.patch("/:id", async (req, res, next) => {
   const { id } = req.params;
+  const { tutorId } = req.body;
   try {
     const updatedUser = await prisma.job.update({
       where: {
         id: Number(id),
       },
-      data: req.body,
+      data: {
+        tutors: {
+          connect: { id: Number(tutorId) },
+        },
+      },
       include: {
-        tutor: true,
+        tutors: true,
       },
     });
     res.json({ success: true, message: `Updated job ${id}`, updatedUser });

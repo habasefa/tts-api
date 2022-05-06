@@ -9,6 +9,8 @@ const { json } = require("express/lib/response");
 let rT = require("../config/refreshTokens");
 let refreshTokens = rT.refreshTokens;
 
+const prisma = new PrismaClient();
+
 // Register User
 router.post("/register", async (req, res, next) => {
   await userRegister(req, res, next);
@@ -40,6 +42,10 @@ router.get("/:id", check_auth, async (req, res, next) => {
       where: {
         id: Number(id),
       },
+      include: {
+        tutor: true,
+        parent: true,
+      },
     });
     if (user) {
       res.json(user);
@@ -47,7 +53,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
       res.json({ success: true, message: `User not found` });
     }
   } catch (error) {
-    res.json({ success: false, message: "Something went wrong." });
+    res.json({ success: false, message: error.toString() });
     next(error);
   }
 });
@@ -58,6 +64,10 @@ router.patch("/:id", check_auth, async (req, res, next) => {
     const updatedUser = await prisma.user.update({
       where: {
         id: Number(id),
+      },
+      include: {
+        tutor: true,
+        parent: true,
       },
       data: req.body,
     });
