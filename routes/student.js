@@ -83,18 +83,23 @@ router.patch("/:id", check_auth, async (req, res, next) => {
   }
 });
 
-router.delete("/:id", check_auth, async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const deletedUser = await prisma.student.delete({
-      where: {
-        id: Number(id),
-      },
-    });
-    res.json({ message: `Deleted student ${id}`, deletedUser });
-  } catch (error) {
-    next(error);
+router.delete(
+  "/:id",
+  check_auth,
+  check_role("ADMIN"),
+  async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const deletedUser = await prisma.student.delete({
+        where: {
+          id: Number(id),
+        },
+      });
+      res.json({ message: `Deleted student ${id}`, deletedUser });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 module.exports = router;

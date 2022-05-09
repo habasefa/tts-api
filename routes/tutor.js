@@ -44,7 +44,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
   try {
     const user = await prisma.tutor.findUnique({
       where: {
-        id: id,
+        id: Number(id),
       },
       include: {
         students: true,
@@ -82,18 +82,46 @@ router.patch("/:id", check_auth, async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.put("/:id", async (req, res, next) => {
   const { id } = req.params;
+  const { studentId } = req.body;
   try {
-    const deletedUser = await prisma.tutor.delete({
+    const updatedUser = await prisma.tutor.update({
       where: {
         id: Number(id),
       },
+      data: {
+        students: {
+          connect: { id: Number(studentId) },
+        },
+      },
+      include: {
+        students: true,
+      },
     });
-    res.json({ success: true, message: `Deleted tutor ${id}`, deletedUser });
+    res.json({ success: true, message: `Updated tutor ${id}`, updatedUser });
   } catch (error) {
     next(error);
   }
 });
+
+router.delete(
+  "/:id",
+  check_auth,
+  check_role("ADMIN"),
+  async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const deletedUser = await prisma.tutor.delete({
+        where: {
+          id: Number(id),
+        },
+      });
+      res.json({ success: true, message: `Deleted tutor ${id}`, deletedUser });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = router;

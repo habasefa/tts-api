@@ -1,6 +1,11 @@
 require("dotenv").config();
 const router = require("express").Router();
-const { userRegister, userLogin } = require("../Utils/auth");
+const {
+  userRegister,
+  userLogin,
+  adminRegister,
+  adminLogin,
+} = require("../Utils/auth");
 const { PrismaClient } = require("@prisma/client");
 const check_auth = require("../middlewares/check_auth");
 const check_role = require("../middlewares/check_role");
@@ -15,9 +20,21 @@ const prisma = new PrismaClient();
 router.post("/register", async (req, res, next) => {
   await userRegister(req, res, next);
 });
+// Register Admin
+router.post(
+  "/adminRegister",
+  check_role("SUPERADMIN"),
+  async (req, res, next) => {
+    await adminRegister(req, res, next);
+  }
+);
 // Login User
 router.post("/login", async (req, res, next) => {
   await userLogin(req, res, next);
+});
+// Login Admin
+router.post("/adminLogin", async (req, res, next) => {
+  await adminLogin(req, res, next);
 });
 
 router.post("/logout", check_auth, (req, res) => {
@@ -82,23 +99,28 @@ router.patch("/:id", check_auth, async (req, res, next) => {
   }
 });
 
-router.delete("/:id", check_auth, async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const deletedUser = await prisma.user.delete({
-      where: {
-        id: Number(id),
-      },
-    });
-    res.json({
-      success: true,
-      message: `Deleted user ${id}`,
-      user: deletedUser,
-    });
-  } catch (error) {
-    res.json({ success: false, message: "Something went wrong." });
-    next(error);
+router.delete(
+  "/:id",
+  check_auth,
+  check_role("ADMIN"),
+  async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const deletedUser = await prisma.user.delete({
+        where: {
+          id: Number(id),
+        },
+      });
+      res.json({
+        success: true,
+        message: `Deleted user ${id}`,
+        user: deletedUser,
+      });
+    } catch (error) {
+      res.json({ success: false, message: "Something went wrong." });
+      next(error);
+    }
   }
-});
+);
 
 module.exports = router;

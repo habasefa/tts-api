@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
@@ -25,7 +26,7 @@ model Tutor {
   email               String    @unique @db.VarChar(50)
   phone               String    @db.VarChar(15)
   gender              Gender
-  age            Int?
+  age                 Int?
   acadStatus          String?
   UEE                 Int?
   cGPA                Decimal?
@@ -50,6 +51,7 @@ model Tutor {
   essay               String?
   hobby               String?
   profilePicture      String?
+  hiredJobId          Int?
   reports             Report[]
   jobs                Job[]
   students            Student[]
@@ -60,48 +62,49 @@ model Tutor {
 }
 
 model Job {
-  id          Int      @id @default(autoincrement())
-  title       String?   @db.VarChar(50)
-  subtitle    String?   @db.VarChar(50)
-  subjects    String[]
-  location    String
-  grade       String   @db.VarChar(30)
-  description String?
-  workDays            Int?
-  workHour            Int?
-  tutors      Tutor[]
-  status      Status   @default(PENDING)
+  id           Int      @id @default(autoincrement())
+  title        String?  @db.VarChar(50)
+  subtitle     String?  @db.VarChar(50)
+  subjects     String[]
+  location     String
+  grade        String   @db.VarChar(30)
+  description  String?
+  workDays     Int?
+  workHour     Int?
+  hiredTutorId Int?
+  tutors       Tutor[]
+  status       Status   @default(PENDING)
 }
 
 model Report {
-  id                Int      @id @default(autoincrement())
-  professionality   String?
-  semiTotalHour     String?
-  noDays     String?
-  feedback     String?
-  envChallenge     String?
-  tuteeChallenge     String?
-  yourChallenge     String?
+  id              Int      @id @default(autoincrement())
+  professionality String?
+  semiTotalHour   String?
+  noDays          String?
+  feedback        String?
+  envChallenge    String?
+  tuteeChallenge  String?
+  yourChallenge   String?
   envResponse     String?
-  tuteeResponse     String?
-  yourResponse     String?
-  envHelp     String?
-  tuteeHelp     String?
-  yourHelp     String?
-  quiz              String?
-  assg              String?
-  test              String?
-  subjects              String?
-  topics              String?
-  reportdate        DateTime @default(now())
-  tutor             Tutor    @relation(fields: [tutorId], references: [id])
-  tutorId           Int
+  tuteeResponse   String?
+  yourResponse    String?
+  envHelp         String?
+  tuteeHelp       String?
+  yourHelp        String?
+  quiz            String?
+  assg            String?
+  test            String?
+  subjects        String?
+  topics          String?
+  reportdate      DateTime @default(now())
+  tutor           Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  tutorId         Int
 }
 
 model Parent {
   id             Int       @id @default(autoincrement())
   fullName       String    @db.VarChar(50)
-  email          String?    @unique @db.VarChar(50)
+  email          String?   @unique @db.VarChar(50)
   phone1         String?   @db.VarChar(15)
   phone2         String?   @db.VarChar(15)
   location       String    @db.VarChar(50)
@@ -122,11 +125,11 @@ model Admin {
 }
 
 model Student {
-  id                  Int       @id @default(autoincrement())
-  fullName            String    @db.VarChar(100)
-  nickName            String?   @db.VarChar(50)
+  id                  Int      @id @default(autoincrement())
+  fullName            String   @db.VarChar(100)
+  nickName            String?  @db.VarChar(50)
   gender              Gender
-  age            Int?
+  age                 Int?
   subjects            String[]
   grade               String?
   school              String?
@@ -137,11 +140,11 @@ model Student {
   idealTutor          String?
   workDays            Int?
   workHour            Int?
-  tutor               Tutor?    @relation(fields: [tutorId], references: [id])
+  tutor               Tutor?   @relation(fields: [tutorId], references: [id])
   tutorId             Int?
-  parent              Parent    @relation(fields: [parentId], references: [id])
+  parent              Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
   parentId            Int
-  status              Status    @default(PENDING)
+  status              Status   @default(PENDING)
 }
 
 enum Gender {

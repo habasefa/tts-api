@@ -57,6 +57,28 @@ router.get("/:id", check_auth, async (req, res, next) => {
   }
 });
 
+router.put("/:id", check_auth, async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await prisma.job.update({
+      where: {
+        id: Number(id),
+      },
+      data: req.body,
+      include: {
+        tutors: true,
+      },
+    });
+    if (user) {
+      res.json({ success: true, message: `job ${id}`, user: user });
+    } else {
+      res.json({ success: false, message: `job not found` });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.patch("/:id", async (req, res, next) => {
   const { id } = req.params;
   const { tutorId } = req.body;
@@ -80,18 +102,23 @@ router.patch("/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const deletedUser = await prisma.job.delete({
-      where: {
-        id: Number(id),
-      },
-    });
-    res.json({ success: true, message: `Deleted job ${id}`, deletedUser });
-  } catch (error) {
-    next(error);
+router.delete(
+  "/:id",
+  check_auth,
+  check_role("ADMIN"),
+  async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const deletedUser = await prisma.job.delete({
+        where: {
+          id: Number(id),
+        },
+      });
+      res.json({ success: true, message: `Deleted job ${id}`, deletedUser });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 module.exports = router;
