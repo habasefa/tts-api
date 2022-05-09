@@ -24,7 +24,7 @@ CREATE TABLE "Tutor" (
     "email" VARCHAR(50) NOT NULL,
     "phone" VARCHAR(15) NOT NULL,
     "gender" "Gender" NOT NULL,
-    "birthDay" TIMESTAMP(3),
+    "age" INTEGER,
     "acadStatus" TEXT,
     "UEE" INTEGER,
     "cGPA" DECIMAL(65,30),
@@ -49,8 +49,10 @@ CREATE TABLE "Tutor" (
     "essay" TEXT,
     "hobby" TEXT,
     "profilePicture" TEXT,
+    "hiredJobId" INTEGER,
     "role" "Role" NOT NULL DEFAULT E'TUTOR',
     "status" "Status" NOT NULL DEFAULT E'PENDING',
+    "userId" INTEGER,
 
     CONSTRAINT "Tutor_pkey" PRIMARY KEY ("id")
 );
@@ -58,12 +60,15 @@ CREATE TABLE "Tutor" (
 -- CreateTable
 CREATE TABLE "Job" (
     "id" SERIAL NOT NULL,
-    "title" VARCHAR(50) NOT NULL,
-    "subtitle" VARCHAR(50) NOT NULL,
+    "title" VARCHAR(50),
+    "subtitle" VARCHAR(50),
     "subjects" TEXT[],
     "location" TEXT NOT NULL,
     "grade" VARCHAR(30) NOT NULL,
-    "description" TEXT NOT NULL,
+    "description" TEXT,
+    "workDays" INTEGER,
+    "workHour" INTEGER,
+    "hiredTutorId" INTEGER,
     "status" "Status" NOT NULL DEFAULT E'PENDING',
 
     CONSTRAINT "Job_pkey" PRIMARY KEY ("id")
@@ -72,17 +77,24 @@ CREATE TABLE "Job" (
 -- CreateTable
 CREATE TABLE "Report" (
     "id" SERIAL NOT NULL,
-    "title" VARCHAR(50) NOT NULL,
-    "subjectTutored" TEXT[],
-    "topicCovered" TEXT,
-    "envChallenge" TEXT,
-    "tuteeReadiness" TEXT,
-    "tutorialDelivery" TEXT,
-    "challengeSolution" TEXT,
-    "howCanWeHelp" TEXT,
-    "quiz" TEXT,
-    "comment" TEXT,
     "professionality" TEXT,
+    "semiTotalHour" TEXT,
+    "noDays" TEXT,
+    "feedback" TEXT,
+    "envChallenge" TEXT,
+    "tuteeChallenge" TEXT,
+    "yourChallenge" TEXT,
+    "envResponse" TEXT,
+    "tuteeResponse" TEXT,
+    "yourResponse" TEXT,
+    "envHelp" TEXT,
+    "tuteeHelp" TEXT,
+    "yourHelp" TEXT,
+    "quiz" TEXT,
+    "assg" TEXT,
+    "test" TEXT,
+    "subjects" TEXT,
+    "topics" TEXT,
     "reportdate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "tutorId" INTEGER NOT NULL,
 
@@ -93,7 +105,7 @@ CREATE TABLE "Report" (
 CREATE TABLE "Parent" (
     "id" SERIAL NOT NULL,
     "fullName" VARCHAR(50) NOT NULL,
-    "email" VARCHAR(50) NOT NULL,
+    "email" VARCHAR(50),
     "phone1" VARCHAR(15),
     "phone2" VARCHAR(15),
     "location" VARCHAR(50) NOT NULL,
@@ -101,6 +113,7 @@ CREATE TABLE "Parent" (
     "profilePicture" TEXT,
     "role" "Role" NOT NULL DEFAULT E'PARENT',
     "status" "Status" NOT NULL DEFAULT E'PENDING',
+    "userId" INTEGER,
 
     CONSTRAINT "Parent_pkey" PRIMARY KEY ("id")
 );
@@ -121,17 +134,17 @@ CREATE TABLE "Student" (
     "fullName" VARCHAR(100) NOT NULL,
     "nickName" VARCHAR(50),
     "gender" "Gender" NOT NULL,
-    "birthDay" TIMESTAMP(3) NOT NULL,
+    "age" INTEGER,
     "subjects" TEXT[],
-    "grade" TEXT NOT NULL,
-    "school" TEXT NOT NULL,
-    "address" TEXT NOT NULL,
+    "grade" TEXT,
+    "school" TEXT,
+    "address" TEXT,
     "hobby" TEXT,
     "prevTutored" BOOLEAN,
     "prevTutorExperience" TEXT,
     "idealTutor" TEXT,
-    "workDays" INTEGER NOT NULL,
-    "workHour" INTEGER NOT NULL,
+    "workDays" INTEGER,
+    "workHour" INTEGER,
     "tutorId" INTEGER,
     "parentId" INTEGER NOT NULL,
     "status" "Status" NOT NULL DEFAULT E'PENDING',
@@ -152,7 +165,13 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Tutor_email_key" ON "Tutor"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Tutor_userId_key" ON "Tutor"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Parent_email_key" ON "Parent"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Parent_userId_key" ON "Parent"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
@@ -164,13 +183,19 @@ CREATE UNIQUE INDEX "_JobToTutor_AB_unique" ON "_JobToTutor"("A", "B");
 CREATE INDEX "_JobToTutor_B_index" ON "_JobToTutor"("B");
 
 -- AddForeignKey
-ALTER TABLE "Report" ADD CONSTRAINT "Report_tutorId_fkey" FOREIGN KEY ("tutorId") REFERENCES "Tutor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Tutor" ADD CONSTRAINT "Tutor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Report" ADD CONSTRAINT "Report_tutorId_fkey" FOREIGN KEY ("tutorId") REFERENCES "Tutor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Parent" ADD CONSTRAINT "Parent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Student" ADD CONSTRAINT "Student_tutorId_fkey" FOREIGN KEY ("tutorId") REFERENCES "Tutor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Student" ADD CONSTRAINT "Student_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Parent"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Student" ADD CONSTRAINT "Student_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Parent"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_JobToTutor" ADD FOREIGN KEY ("A") REFERENCES "Job"("id") ON DELETE CASCADE ON UPDATE CASCADE;
