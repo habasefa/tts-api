@@ -188,13 +188,13 @@ const adminLogin = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({
         status: false,
-        message: "Login Failed.",
+        message: "No User, Login Failed.",
       });
     }
     if (user.role == "PARENT" || user.role == "TUTOR") {
       return res.status(404).json({
         status: false,
-        message: "Login Failed.",
+        message: "Auth Failed, Login Failed.",
       });
     }
 
@@ -202,7 +202,9 @@ const adminLogin = async (req, res, next) => {
     let isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch)
-      return res.status(400).json({ success: false, message: "Login Failed." });
+      return res
+        .status(400)
+        .json({ success: false, message: "Credential Error, Login Failed." });
 
     const access_token = createAccessToken({
       id: user.id,
