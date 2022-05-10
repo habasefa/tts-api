@@ -34,13 +34,13 @@ const userRegister = async (req, res, next) => {
         message: "Email is taken!",
       });
     }
-    let validRole = validateRole(role);
-    if (!validRole) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized.",
-      });
-    }
+    // let validRole = validateRole(role);
+    // if (!validRole) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: "Unauthorized.",
+    //   });
+    // }
 
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
