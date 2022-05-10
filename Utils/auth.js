@@ -255,7 +255,7 @@ const validateEmail = async (email) => {
 // role validate function
 const validateRole = (role) => {
   if (role === "ADMIN" || role === "SUPERDMIN") {
-    return false;
+    return true;
   }
   if (role === "TUTOR" || role === "PARENT") {
     return true;
