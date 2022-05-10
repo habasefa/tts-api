@@ -1,11 +1,9 @@
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const log = require("../lib/chalkLog");
 
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { SECRET } = require("../config/index");
 const { createAccessToken, createRefreshToken } = require("./generateToken");
 let rT = require("../config/refreshTokens");
 let refreshTokens = rT.refreshTokens;
@@ -34,13 +32,13 @@ const userRegister = async (req, res, next) => {
         message: "Email is taken!",
       });
     }
-    // let validRole = validateRole(role);
-    // if (!validRole) {
-    //   return res.status(401).json({
-    //     success: false,
-    //     message: "Unauthorized.",
-    //   });
-    // }
+    let validRole = validateRole(role);
+    if (!validRole) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized.",
+      });
+    }
 
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -255,7 +253,7 @@ const validateEmail = async (email) => {
 // role validate function
 const validateRole = (role) => {
   if (role === "ADMIN" || role === "SUPERDMIN") {
-    return true;
+    return false;
   }
   if (role === "TUTOR" || role === "PARENT") {
     return true;

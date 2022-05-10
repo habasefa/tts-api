@@ -9,7 +9,6 @@ const {
 const { PrismaClient } = require("@prisma/client");
 const check_auth = require("../middlewares/check_auth");
 const check_role = require("../middlewares/check_role");
-const { json } = require("express/lib/response");
 
 let rT = require("../config/refreshTokens");
 let refreshTokens = rT.refreshTokens;

@@ -3,7 +3,6 @@ const router = require("express").Router();
 const { PrismaClient } = require("@prisma/client");
 
 const check_auth = require("../middlewares/check_auth");
-const check_role = require("../middlewares/check_role");
 const { adminRegister, adminLogin } = require("../Utils/adminAuth");
 
 const prisma = new PrismaClient();

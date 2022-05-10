@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const log = require("../lib/chalkLog");
 
 const check_role = (inputRole) => (req, res, next) => {
   const authHeader = req.headers.authorization;
