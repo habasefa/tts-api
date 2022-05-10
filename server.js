@@ -7,7 +7,7 @@ const cors = require("cors");
 const log = require("./lib/chalkLog");
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
