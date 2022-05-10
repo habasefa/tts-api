@@ -11,7 +11,7 @@
   "author": "Naboni Abebe",
   "license": "ISC",
   "devDependencies": {
-    "prisma": "^3.10.0"
+    "prisma": "^3.13.0"
   },
   "dependencies": {
     "@prisma/client": "^3.10.0",
