@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Report" ADD COLUMN     "rate" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "status" "Status" NOT NULL DEFAULT E'PENDING';

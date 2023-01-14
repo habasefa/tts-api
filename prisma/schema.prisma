@@ -75,31 +75,57 @@ model Job {
   tutors       Tutor[]
   status       Status   @default(PENDING)
 }
-
 model Report {
   id              Int      @id @default(autoincrement())
-  professionality String?
-  semiTotalHour   String?
-  noDays          String?
-  feedback        String?
-  envChallenge    String?
-  tuteeChallenge  String?
-  yourChallenge   String?
-  envResponse     String?
-  tuteeResponse   String?
-  yourResponse    String?
-  envHelp         String?
-  tuteeHelp       String?
-  yourHelp        String?
-  quiz            String?
-  assg            String?
-  test            String?
-  subjects        String?
-  topics          String?
-  reportdate      DateTime @default(now())
+  totalDays       String
+  totalHours      String
+  month           String
+  week            String
+  feedback        String
+  pastChallenge   String
+  futureChallenge String
+  helpChallenge   String
+  dressing        String
+  grooming        String
+  hygiene         String
+  punctuality     String
+  manner          String
+  elequence       String
+  reports         Json ?
+  reportDate      Int
+  reportMonth     Int
+  reportYear      Int
   tutor           Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   tutorId         Int
+  tutorName       String
+  rate         Int   @default(0)
+  status      Status   @default(PENDING)
 }
+// model Report {
+//   id              Int      @id @default(autoincrement())
+//   professionality String?
+//   semiTotalHour   String?
+//   noDays          String?
+//   feedback        String?
+//   envChallenge    String?
+//   tuteeChallenge  String?
+//   yourChallenge   String?
+//   envResponse     String?
+//   tuteeResponse   String?
+//   yourResponse    String?
+//   envHelp         String?
+//   tuteeHelp       String?
+//   yourHelp        String?
+//   quiz            String?
+//   assg            String?
+//   test            String?
+//   subjects        String?
+//   topics          String?
+//   reportdate      DateTime @default(now())
+//   tutor           Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+//   tutorId         Int
+// }
+
 
 model Parent {
   id             Int       @id @default(autoincrement())
@@ -128,7 +154,7 @@ model Student {
   id                  Int      @id @default(autoincrement())
   fullName            String   @db.VarChar(100)
   nickName            String?  @db.VarChar(50)
-  gender              Gender
+  gender              String?
   age                 Int?
   subjects            String[]
   grade               String?
@@ -145,6 +171,24 @@ model Student {
   parent              Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
   parentId            Int
   status              Status   @default(PENDING)
+}
+
+model Grades {
+  id    Int    @id@default(1)
+  kG    Int   @default(0)
+  from1Ton4   Int @default(0)
+  from5To6     Int @default(0)
+  from7To8     Int @default(0)
+  from9To10    Int @default(0)
+  from11T012   Int @default(0)  
+
+
+}
+model ParentInYear {
+  id Int @id
+  month Int 
+  year Int 
+  parentRegisterNumber Int @default(0)
 }
 
 enum Gender {

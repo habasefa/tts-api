@@ -60,6 +60,7 @@ const userRegister = async (req, res, next) => {
   }
 };
 const adminRegister = async (req, res, next) => {
+  console.log(req.body)
   try {
     log.flag("signing up...");
     const { email, password, role } = req.body;
@@ -108,7 +109,6 @@ const adminRegister = async (req, res, next) => {
 const userLogin = async (req, res, next) => {
   try {
     log.flag("logging in...");
-
     let { email, password } = req.body;
 
     const user = await prisma.user.findFirst({
@@ -126,10 +126,8 @@ const userLogin = async (req, res, next) => {
         message: "Login Failed.",
       });
     }
-
     // compare hashed password
     let isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch)
       return res.status(400).json({ success: false, message: "Login Failed." });
 
@@ -175,7 +173,7 @@ const adminLogin = async (req, res, next) => {
     log.flag("logging in...");
 
     let { email, password } = req.body;
-
+    console.log(email,password)
     const user = await prisma.user.findFirst({
       where: {
         email: email,
@@ -185,6 +183,7 @@ const adminLogin = async (req, res, next) => {
         parent: true,
       },
     });
+    console.log(user)
     if (!user) {
       return res.status(404).json({
         status: false,
@@ -200,7 +199,7 @@ const adminLogin = async (req, res, next) => {
 
     // compare hashed password
     let isMatch = await bcrypt.compare(password, user.password);
-
+    
     if (!isMatch)
       return res
         .status(400)
@@ -254,7 +253,7 @@ const validateEmail = async (email) => {
 };
 // role validate function
 const validateRole = (role) => {
-  if (role === "ADMIN" || role === "SUPERDMIN") {
+  if (role === "ADMIN" || role === "SUPERADMIN") {
     return false;
   }
   if (role === "TUTOR" || role === "PARENT") {

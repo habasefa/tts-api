@@ -17,6 +17,7 @@ const prisma = new PrismaClient();
 
 // Register User
 router.post("/register", async (req, res, next) => {
+  console.log(req)
   await userRegister(req, res, next);
 });
 // Register Admin
@@ -29,6 +30,7 @@ router.post(
 );
 // Login User
 router.post("/login", async (req, res, next) => {
+  // console.log(req)
   await userLogin(req, res, next);
 });
 // Login Admin
@@ -53,6 +55,7 @@ router.get("/", check_auth, async (req, res, next) => {
 
 router.get("/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
+  console.log(id)
   try {
     const user = await prisma.user.findUnique({
       where: {

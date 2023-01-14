@@ -11,6 +11,7 @@ const {
 
 router.post("/", async (req, res, next) => {
   const refresh_token = req.body.refresh_token;
+  console.log(refresh_token,"refresh")
   if (!refresh_token) {
     return res.status(403).json({ message: "User not authenticated." });
   }

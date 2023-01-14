@@ -23,10 +23,29 @@ router.post("/", check_auth, async (req, res, next) => {
     next(error);
   }
 });
-
+router.get("/pending", check_auth, async (req, res, next) => {
+  try {
+    const users = await prisma.tutor.findMany({
+      where :{
+        status : "PENDING"
+      },
+      include: {
+        students: true,
+        reports: true,
+        jobs: true,
+      },
+    });
+    res.json({ success: true, message: "List of Pending Tutors", users: users });
+  } catch (error) {
+    next(error);
+  }
+});
 router.get("/", check_auth, async (req, res, next) => {
   try {
     const users = await prisma.tutor.findMany({
+      where :{
+        status : "SUCCESS"
+      },
       include: {
         students: true,
         reports: true,
@@ -39,8 +58,30 @@ router.get("/", check_auth, async (req, res, next) => {
   }
 });
 
+router.get("/location/:location", check_auth, async (req, res, next) => {
+  const {location} =req.params;
+  console.log(location)
+  try {
+    const users = await prisma.tutor.findMany({
+      where :{
+        location:String(location)
+      },
+      include: {
+        students: true,
+        reports: true,
+        jobs: true,
+      },
+    });
+    console.log(users)
+    res.json({ success: true, message: "List of Tutors", users: users });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
+  console.log(id)
   try {
     const user = await prisma.tutor.findUnique({
       where: {
@@ -52,6 +93,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
         jobs: true,
       },
     });
+    console.log(user)
     if (user) {
       res.json({ success: true, message: `tutor ${id}`, user: user });
     } else {
@@ -64,6 +106,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
 
 router.patch("/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
+  console.log(id)
   try {
     const updatedUser = await prisma.tutor.update({
       where: {
