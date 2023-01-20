@@ -207,4 +207,5 @@ enum Status {
   PENDING
   FAILED
   SUCCESS
+  REJECTED
 }

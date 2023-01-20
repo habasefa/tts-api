@@ -140,6 +140,36 @@ router.get("/one/:id", check_auth, async (req, res, next) => {
     next(error);
   }
 });
+
+router.get("/one/rejected/:id", check_auth, async (req, res, next) => {
+  const val = req.params.id;
+  console.log(req.params);
+  console.log(val);
+  try {
+    const reports = await prisma.report.findMany({
+      where: {
+        tutorId: Number(val),
+        status:"FAILED"
+      },
+      include: {
+        tutor: true,
+      },
+    });
+    console.log(reports);
+    if (reports) {
+      res.json({
+        success: true,
+        message: " List of reports",
+        reports: reports,
+      });
+    } else {
+      res.json({ success: false, message: `report not found` });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/", check_auth, async (req, res, next) => {
   try {
     const users = await prisma.report.findMany({
@@ -156,6 +186,7 @@ router.get("/", check_auth, async (req, res, next) => {
 router.get("/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
   console.log(id);
+  console.log("hi")
 
   try {
     const user = await prisma.report.findUnique({
@@ -174,6 +205,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
       res.json({ success: false, message: `report not found` });
     }
   } catch (error) {
+    console.log(error)
     next(error);
   }
 });
@@ -202,6 +234,7 @@ router.patch("/:id", async (req, res, next) => {
 
 router.delete("/:id", async (req, res, next) => {
   const { id } = req.params;
+  console.log(id,'find')
   try {
     const deletedUser = await prisma.report.delete({
       where: {
@@ -210,7 +243,9 @@ router.delete("/:id", async (req, res, next) => {
     });
     res.json({ success: true, message: `Deleted report ${id}`, deletedUser });
   } catch (error) {
+    console.log(error)
     next(error);
+    
   }
 });
 

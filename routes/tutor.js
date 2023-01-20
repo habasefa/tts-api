@@ -41,6 +41,7 @@ router.get("/pending", check_auth, async (req, res, next) => {
   }
 });
 router.get("/", check_auth, async (req, res, next) => {
+  console.log('hi')
   try {
     const users = await prisma.tutor.findMany({
       where :{
@@ -52,8 +53,10 @@ router.get("/", check_auth, async (req, res, next) => {
         jobs: true,
       },
     });
+    console.log(users)
     res.json({ success: true, message: "List of Tutors", users: users });
   } catch (error) {
+    console.log(error)
     next(error);
   }
 });
@@ -121,6 +124,7 @@ router.patch("/:id", check_auth, async (req, res, next) => {
     });
     res.json({ success: true, message: `Updated tutor ${id}`, updatedUser });
   } catch (error) {
+    console.log(error)
     next(error);
   }
 });

@@ -194,7 +194,7 @@ router.delete(
       console.log(deletedUser)
       res.json({ success: true, message: `Deleted parent ${id}`, deletedUser });
     } catch (error) {
-      console.log(errro)
+      console.log(errror)
       next(error);
     }
   }
