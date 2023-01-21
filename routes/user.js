@@ -101,9 +101,9 @@ router.patch("/forgotPassword", async (req, res, next) => {
     console.log(password)
     const hashedPassword = await bcrypt.hash(password, 10);
     const templateParams = {
-    
+      
       to_email: user.email,
-      message: `Your new Passwor ${password }.`,
+      message: `Your new Password ${password }.`,
     }
 
     prisma.user.update({
