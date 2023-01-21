@@ -1,4 +1,7 @@
 require("dotenv").config();
+const generator = require('generate-password');
+const emailjs = require('@emailjs/nodejs');
+const bcrypt = require("bcrypt");
 const router = require("express").Router();
 const {
   userRegister,
@@ -77,9 +80,83 @@ router.get("/:id", check_auth, async (req, res, next) => {
   }
 });
 
+router.patch("/forgotPassword", async (req, res, next) => {
+  
+  const {email } = req.body;
+    const user = await prisma.user.findUnique({
+      where: {
+        email:email
+      },
+      include: {
+        tutor: true,
+        parent: true,
+      },
+    });
+    console.log(user)
+    
+    const password = generator.generate({
+      length: 10,
+      numbers: true
+    });
+    console.log(password)
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const templateParams = {
+    
+      to_email: user.email,
+      message: `Your new Passwor ${password }.`,
+    }
+
+    prisma.user.update({
+      where: {
+        email:email
+      },
+      include: {
+        tutor: true,
+        parent: true,
+      },
+      data: {   
+        ...req.body,
+        password : hashedPassword,
+      },
+    }).then((updatedUser)=>{
+      
+       emailjs
+        .send(
+          process.env.EMAIL_SERVICE_ID,
+           process.env.EMAIL_TEMPLATE_ID,
+           templateParams,
+          {
+            publicKey: process.env.EMAIL_PUBLIC_KEY,
+    privateKey:process.env.EMAIL_PRIVATE_KEY, 
+          }
+          )
+           .then(
+           (response) => {
+            
+            res.json({
+              success: true,
+              message: `Email is Sent`,
+              user: response,
+            });
+          },
+          (err) => {
+            res.json({ success: false, message: "Something went wrong." });
+            next(err);
+              }
+          )
+    })
+   
+   
+ 
+});
+
+
 router.patch("/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
+  const {password } = req.body;
+  
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const updatedUser = await prisma.user.update({
       where: {
         id: Number(id),
@@ -88,8 +165,13 @@ router.patch("/:id", check_auth, async (req, res, next) => {
         tutor: true,
         parent: true,
       },
-      data: req.body,
+      data: {
+        
+        ...req.body,
+        password : hashedPassword,
+      },
     });
+    console.log(updatedUser)
     res.json({
       success: true,
       message: `Updated user ${id}`,
