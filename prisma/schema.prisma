@@ -132,7 +132,7 @@ model Parent {
   id             Int       @id @default(autoincrement())
   fullName       String    @db.VarChar(50)
   email          String?   @unique @db.VarChar(50)
-  phone1         String?   @unique @db.VarChar(15)
+  phone1         String?    @db.VarChar(15)
   phone2         String?   @db.VarChar(15)
   location       String    @db.VarChar(50)
   preferredBank  String?   @db.VarChar(50)
