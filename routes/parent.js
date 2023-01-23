@@ -8,6 +8,7 @@ const check_role = require("../middlewares/check_role");
 const prisma = new PrismaClient();
 
 router.post("/", async (req, res, next) => {
+  console.log(req.body)
   try {
     const parent = await prisma.parent.findUnique({
       where: {
@@ -17,9 +18,10 @@ router.post("/", async (req, res, next) => {
         students: true,
       },
     });
+     console.log(parent,"jods")
     if (!parent)
     {
-    
+    console.log('sfs')
     const parent = await prisma.parent.create({
       data: {
         ...req.body,
@@ -100,6 +102,7 @@ router.post("/", async (req, res, next) => {
     });
   }
   } catch (error) {
+    console.log(error)
     next(error);
   }
 });
