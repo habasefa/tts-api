@@ -12,7 +12,7 @@ router.post("/", async (req, res, next) => {
   try {
     const parent = await prisma.parent.findUnique({
       where: {
-       phone1:req.body.phone1 ,
+       phone1: req.body.phone1 ,
       },
       include: {
         students: true,
