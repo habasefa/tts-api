@@ -20,6 +20,7 @@ router.post("/", check_auth, async (req, res, next) => {
       tutor,
     });
   } catch (error) {
+    console.log(error)
     next(error);
   }
 });

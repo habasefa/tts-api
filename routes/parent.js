@@ -9,13 +9,24 @@ const prisma = new PrismaClient();
 
 router.post("/", async (req, res, next) => {
   try {
+    const parent = await prisma.parent.findUnique({
+      where: {
+       phone1:req.body.phone1 ,
+      },
+      include: {
+        students: true,
+      },
+    });
+    if (!parent)
+    {
     
     const parent = await prisma.parent.create({
       data: {
         ...req.body,
       },
     });
-    console.log(parent)
+  
+    
     let date = new Date()
 
     let months=date.getMonth()+1
@@ -73,13 +84,21 @@ router.post("/", async (req, res, next) => {
     }
 
   
-   
+  
     console.log(parent)
     res.status(201).json({
       success: true,
       message: "Parent Registered.",
       parent,
     });
+  }
+  else{
+    res.status(201).json({
+      success: true,
+      message: "Parent Existed.",
+      parent,
+    });
+  }
   } catch (error) {
     next(error);
   }
