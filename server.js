@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const http = require('https');
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -53,6 +54,11 @@ app.use((error, req, res, next) => {
   });
 });
 
+setInterval(()=>{
+  console.log("hi 1 sec")
+  http.get('https://temaribet-api.onrender.com');
+
+},1 * 60 * 1000)
 // listen to server
 app.listen(port, () => {
   log.success(`Server is running on port ${port}.`);
