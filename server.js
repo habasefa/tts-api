@@ -55,10 +55,10 @@ app.use((error, req, res, next) => {
 });
 
 setInterval(()=>{
-  console.log("hi 1 sec")
+  console.log("every 14 min")
   http.get('https://temaribet-api.onrender.com');
 
-},1 * 60 * 1000)
+},14 * 60 * 1000)
 // listen to server
 app.listen(port, () => {
   log.success(`Server is running on port ${port}.`);
