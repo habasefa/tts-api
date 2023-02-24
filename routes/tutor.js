@@ -1,7 +1,8 @@
 require("dotenv").config();
 const router = require("express").Router();
 const { PrismaClient } = require("@prisma/client");
-
+const cloudinary = require('../Utils/cloudinary');
+const upload = require('../Utils/multer');
 const check_auth = require("../middlewares/check_auth");
 const check_role = require("../middlewares/check_role");
 
@@ -171,5 +172,50 @@ router.delete(
     }
   }
 );
+
+router.get("/fetchTimeSheet/:id",check_auth,async (req,res,next)=>{
+  const { id } = req.params;
+
+  try{
+    const timeSheets = await prisma.image.findMany({
+      where: {
+        id:Number(id),
+      }
+    })
+    res.json({success:true, message : 'List of timeSheets', timeSheets})
+  }
+  catch (err){
+    console.log(err);
+    next(err);
+  }
+})
+router.post("/upload",check_auth, upload.single("image"), async (req, res,next) => {
+  try {
+    // Upload image to cloudinary
+    
+    console.log(req.body.data)
+    
+    const result = await cloudinary.uploader.upload(req.file.path);
+     // Create new user
+    console.log(result.url)
+    const data = JSON.parse(req.body.data);
+    const image = await prisma.image.create({
+      data:{
+      tutorId: data.tutorId,
+      listStudent : data.listStudent,
+      parentName: data.parentName,
+      month: data.month,
+      cloudinary_id : result.url,
+      }
+
+    })
+    console.log(image)
+    res.json({ success: true, message: 'Image Created', image });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }}); 
+
+router.get('/fetchImage',)
 
 module.exports = router;

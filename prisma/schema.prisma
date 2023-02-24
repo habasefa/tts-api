@@ -192,6 +192,16 @@ model ParentInYear {
   parentRegisterNumber Int @default(0)
 }
 
+
+model Image {
+  id Int      @id @default(autoincrement())
+  tutorId Int   
+  month   Int
+  parentName String
+  cloudinary_id String
+  listStudent Json
+
+}
 enum Gender {
   Male
   Female
