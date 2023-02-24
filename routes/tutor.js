@@ -199,12 +199,14 @@ router.post("/upload",check_auth, upload.single("image"), async (req, res,next) 
      // Create new user
     console.log(result.url)
     const data = JSON.parse(req.body.data);
+    console.log(data)
+    
     const image = await prisma.image.create({
       data:{
-      tutorId: data.tutorId,
-      listStudent : data.listStudent,
-      parentName: data.parentName,
-      month: data.month,
+      tutorId: data?.tutorId,
+      listStudent : data?.listStudent,
+      parentName: data?.parentName,
+      month: data?.month,
       cloudinary_id : result.url,
       }
 
