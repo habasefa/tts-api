@@ -10,13 +10,14 @@ const prisma = new PrismaClient();
 router.post("/", async (req, res, next) => {
   try {
    
+    console.log(req.body)
     const parent = await prisma.parent.create({
       data: {
         ...req.body,
       },
     });
   
-    console.log(parent)
+    console.log(parent,"created parent")
     let date = new Date()
 
     let months=date.getMonth()+1
@@ -24,65 +25,38 @@ router.post("/", async (req, res, next) => {
     let years = date.getFullYear()
     console.log(months,years)
     const result = '' + years + months;
-    console.log(result)
-    const yearWithMonth = await prisma.parentInYear.findUnique({
-      where :
-      {
-      id:Number(result)
-        
-
-
-      }
-    })
-    console.log(yearWithMonth)
-    if (yearWithMonth)
-    {
-      const increment =await prisma.parentInYear.update({
+    const createdUpdatedparentInyear =await prisma.$transaction([
+      prisma.parentInYear.upsert({
         where: {
-
-          id : Number(result)
+          id: result
         },
-        data: {
-          
-          parentRegisterNumber: {increment: 1}}
-      });
-      console.log(increment)
-
-    }
-    else{
-      const createdYearWithMonth = await prisma.parentInYear.create({
-        data:{
-          id : Number(result),
-          year: years,
-          month:months
+        update: {
+          parentRegisterNumber : {
+            increment: 1
+          }
+        },
+        create: {
+          id: result,
+          parentRegisterNumber: 1,
+          month: months,
+          year : years
         }
       })
-      .then(async (data)=>{
-        const increment =await prisma.parentInYear.update({
-          where: {
+    ]);
+    console.log(createdUpdatedparentInyear)
 
-            id : Number(result)
-          },
-          data: {
-            
-            parentRegisterNumber: {increment: 1}}
-        });
-      console.log(increment)
-
-      })
-
-    }
+    
 
   
    
-    console.log(parent)
+    console.log(parent,"created parent")
     res.status(201).json({
       success: true,
       message: "Parent Registered.",
       parent,
     });
   } catch (error) {
-    
+    console.log(error)
     next(error);
   }
 });
@@ -146,7 +120,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
   try {
     const user = await prisma.parent.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
       include: {
         students: true,
@@ -167,7 +141,7 @@ router.patch("/:id", async (req, res, next) => {
   try {
     const updatedUser = await prisma.parent.update({
       where: {
-        id: Number(id),
+        id: id,
       },
       data: req.body,
       include: {
@@ -190,7 +164,7 @@ router.delete(
     try {
       const deletedUser = await prisma.parent.delete({
         where: {
-          id: Number(id),
+          id: id,
         },
       });
       console.log(deletedUser)

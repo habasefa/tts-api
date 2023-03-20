@@ -55,7 +55,7 @@ app.use((error, req, res, next) => {
 });
 
 setInterval(()=>{
-  console.log("every 14 min")
+  console.log("every 10 min")
   http.get('https://temaribet-api.onrender.com');
 
 },10 * 60 * 1000)

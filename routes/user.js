@@ -25,7 +25,7 @@ router.post("/register", async (req, res, next) => {
 // Register Admin
 router.post(
   "/adminRegister",
-  check_role("SUPERADMIN"),
+  // check_role("SUPERADMIN"),
   async (req, res, next) => {
     await adminRegister(req, res, next);
   }
@@ -61,7 +61,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({
       where: {
-        id: Number(id),
+        id:id,
       },
       include: {
         tutor: true,
@@ -158,7 +158,7 @@ router.patch("/:id", check_auth, async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const updatedUser = await prisma.user.update({
       where: {
-        id: Number(id),
+        id: id,
       },
       include: {
         tutor: true,
@@ -191,7 +191,7 @@ router.delete(
     try {
       const deletedUser = await prisma.user.delete({
         where: {
-          id: Number(id),
+          id: id,
         },
       });
       res.json({

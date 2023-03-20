@@ -3,17 +3,18 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  previewFeatures = ["mongoDb"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL") 
+
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique @db.VarChar(50)
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  email    String  @unique 
   password String
   role     Role    @default(TUTOR)
   tutor    Tutor?
@@ -21,16 +22,16 @@ model User {
 }
 
 model Tutor {
-  id                  Int       @id @default(autoincrement())
-  fullName            String    @db.VarChar(50)
-  email               String    @unique @db.VarChar(50)
-  phone               String    @db.VarChar(15)
+  id                  String       @id @default(auto()) @map("_id") @db.ObjectId
+  fullName            String    
+  email               String    @unique 
+  phone               String   
   gender              Gender
   age                 Int?
   acadStatus          String?
   UEE                 Int?
-  cGPA                Decimal?
-  field               String?   @db.VarChar(50)
+  cGPA                Float?
+  field               String?  
   college             String?
   volenteerism        String?
   prevTutored         Boolean?
@@ -41,43 +42,46 @@ model Tutor {
   bankAccountNo       String?
   contactName         String?
   telegramUsername    String?
-  contactPhone1       String?   @db.VarChar(15)
-  contactPhone2       String?   @db.VarChar(15)
-  contactEmail        String?   @db.VarChar(50)
+  contactPhone1       String?   
+  contactPhone2       String?  
+  contactEmail        String?   
   workDays            Int?
   workHour            Int?
   experience          Boolean?
   subjects            String[]
-  location            String    @db.VarChar(50)
+  location            String    
   essay               String?
   hobby               String?
   profilePicture      String?
   hiredJobId          Int?
   reports             Report[]
-  jobs                Job[]
+  timeSheets          Image []
+  jobIDs       String[] @db.ObjectId
+  jobs                Job[]  @relation(fields: [jobIDs], references: [id])
   students            Student[]
   role                Role      @default(TUTOR)
   status              Status    @default(PENDING)
   user                User?     @relation(fields: [userId], references: [id])
-  userId              Int?      @unique
+  userId              String?      @unique@db.ObjectId
 }
 
 model Job {
-  id           Int      @id @default(autoincrement())
-  title        String?  @db.VarChar(50)
-  subtitle     String?  @db.VarChar(50)
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  title        String? 
+  subtitle     String?  
   subjects     String[]
   location     String
-  grade        String   @db.VarChar(30)
+  grade        String  
   description  String?
   workDays     Int?
   workHour     Int?
   hiredTutorId Int?
-  tutors       Tutor[]
+  tutorIDs       String[] @db.ObjectId
+  tutors       Tutor[]  @relation(fields: [tutorIDs], references: [id])
   status       Status   @default(PENDING)
 }
 model Report {
-  id              Int      @id @default(autoincrement())
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
   totalDays       String
   totalHours      String
   month           String
@@ -97,7 +101,7 @@ model Report {
   reportMonth     Int
   reportYear      Int
   tutor           Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
-  tutorId         Int
+  tutorId         String @db.ObjectId
   tutorName       String
   rate         Int   @default(0)
   status      Status   @default(PENDING)
@@ -129,32 +133,33 @@ model Report {
 
 
 model Parent {
-  id             Int       @id @default(autoincrement())
-  fullName       String    @db.VarChar(50)
-  email          String?   @unique @db.VarChar(50)
-  phone1         String?    @db.VarChar(15)
-  phone2         String?   @db.VarChar(15)
-  location       String    @db.VarChar(50)
-  preferredBank  String?   @db.VarChar(50)
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  fullName       String    
+  email          String?    @map("{'unique': true, 'partialFilterExpression': {'email': {'$exists': true}}}")
+  phone1         String?    
+  phone2         String?  
+  location       String    
+  preferredBank  String?   
   profilePicture String?
   students       Student[]
   role           Role      @default(PARENT)
   status         Status    @default(PENDING)
   user           User?     @relation(fields: [userId], references: [id])
-  userId         Int?      @unique
+  userId         String?     @unique()  @db.ObjectId
+  timeSheets      Image[]
 }
 
 model Admin {
-  id       Int    @id @default(autoincrement())
-  email    String @unique @db.VarChar(50)
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  email    String @unique 
   password String
   role     Role   @default(ADMIN)
 }
 
 model Student {
-  id                  Int      @id @default(autoincrement())
-  fullName            String   @db.VarChar(100)
-  nickName            String?  @db.VarChar(50)
+  id                 String       @id @default(auto()) @map("_id") @db.ObjectId
+  fullName            String   
+  nickName            String?  
   gender              String?
   age                 Int?
   subjects            String[]
@@ -168,14 +173,14 @@ model Student {
   workDays            Int?
   workHour            Int?
   tutor               Tutor?   @relation(fields: [tutorId], references: [id])
-  tutorId             Int?
+  tutorId             String?  @db.ObjectId
   parent              Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
-  parentId            Int
+  parentId            String   @db.ObjectId
   status              Status   @default(PENDING)
 }
 
 model Grades {
-  id    Int    @id@default(1)
+  id     Int       @id@default(1) @map("_id") 
   kG    Int   @default(0)
   from1Ton4   Int @default(0)
   from5To6     Int @default(0)
@@ -185,8 +190,8 @@ model Grades {
 
 
 }
-model ParentInYear {
-  id Int @id
+model ParentInYear {ectId
+  id  String       @id  @map("_id") 
   month Int 
   year Int 
   parentRegisterNumber Int @default(0)
@@ -194,12 +199,18 @@ model ParentInYear {
 
 
 model Image {
-  id Int      @id @default(autoincrement())
-  tutorId Int   
+  id  String       @id @default(auto()) @map("_id") @db.ObjectId
+  tutor           Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  tutorId         String @db.ObjectId
   month   Int
-  parentName String
-  cloudinary_id String
+  cloudinary_id String 
   listStudent Json
+  year Int
+  statusOfAcceptance Status  @default(PENDING)
+  statusOfMoneySent Status  @default(PENDING)
+  parent           Parent    @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  parentId         String @db.ObjectId
+  
 
 }
 enum Gender {

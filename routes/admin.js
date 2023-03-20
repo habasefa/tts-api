@@ -30,7 +30,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
   try {
     const user = await prisma.admin.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
     });
     if (user) {
@@ -48,7 +48,7 @@ router.patch("/:id", async (req, res, next) => {
   try {
     const updatedUser = await prisma.admin.update({
       where: {
-        id: Number(id),
+        id: id,
       },
       data: req.body,
     });
@@ -63,7 +63,7 @@ router.delete("/:id", async (req, res, next) => {
   try {
     const deletedUser = await prisma.admin.delete({
       where: {
-        id: Number(id),
+        id: id,
       },
     });
     res.json({ success: true, message: `Deleted admin ${id}`, deletedUser });

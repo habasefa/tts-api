@@ -19,104 +19,117 @@ router.post(
         },
       });
    
-      const check =await prisma.grades.findUnique({
-        where :{
-          id : 1
-        }
-      }) 
-      if (check)
-      {
+
+      
         if (req.body.grade=="K-G"){
-          const increment =await prisma.grades.update({
-            where: { id: 1 },
-            data: {kG: {increment: 1}}
-          });
+         
+         const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+          where: {
+            id: 1,
+          },
+          update: {
+            kG: {
+              increment: 1,
+            },
+          },
+          create: {
+            id: 1,
+            kG: 1,
+          },
+        })])
         }
 
        else if (req.body.grade=="5" || req.body.grade=="6"){
-          const increment =await prisma.grades.update({
-            where: { id: 1 },
-            data: {from5To6: {increment: 1}}
-          });
+        const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+          where: {
+            id: 1,
+          },
+          update: {
+            from5To6: {
+              increment: 1,
+            },
+          },
+          create: {
+            id: 1,
+            from5To6: 1,
+          },
+        })])
         }
         else if (req.body.grade=="7" || req.body.grade=="8"){
-          const increment =await prisma.grades.update({
-            where: { id: 1 },
-            data: {from7To8: {increment: 1}}
-          });
+          const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+            where: {
+              id: 1,
+            },
+            update: {
+              from7To8: {
+                increment: 1,
+              },
+            },
+            create: {
+              id: 1,
+              from7To8: 1,
+            },
+          })])
+         
         }
         else if (req.body.grade=="9" || req.body.grade=="10"){
-          const increment =await prisma.grades.update({
-            where: { id: 1 },
-            data: {from9To10: {increment: 1}}
-          });
+          const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+            where: {
+              id: 1,
+            },
+            update: {
+              from9To10: {
+                increment: 1,
+              },
+            },
+            create: {
+              id: 1,
+              from9To10: 1,
+            },
+          })])
+         
         }
         else if (req.body.grade=="11" || req.body.grade=="12"){
-          const increment =await prisma.grades.update({
-            where: { id: 1 },
-            data: {from11T012: {increment: 1}}
-          });
+          const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+            where: {
+              id: 1,
+            },
+            update: {
+              from11T012: {
+                increment: 1,
+              },
+            },
+            create: {
+              id: 1,
+              from11T012: 1,
+            },
+          })])
+          
         }
         else{
-          const increment =await prisma.grades.update({
-            where: { id: 1 },
-            data: {from1Ton4: {increment: 1}}
-          });
+        
+          const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+            where: {
+              id: 1,
+            },
+            update: {
+              from1Ton4: {
+                increment: 1,
+              },
+            },
+            create: {
+              id: 1,
+              from1Ton4: 1,
+            },
+          })])
+        
 
         }
-      }
-      else
-      {
-        const creating = await prisma.grades.create({
-          data:{}
-        }
-         
-        )
-        .then(
-          async (data)=>{
-            if (req.body.grade=="K-G"){
-              const increment =await prisma.grades.update({
-                where: { id: 1 },
-                data: {kG: {increment: 1}}
-              });
-            }
+        
+        
+        console.log()
+       
     
-           else if (req.body.grade=="5" || req.body.grade=="6"){
-              const increment =await prisma.grades.update({
-                where: { id: 1 },
-                data: {from5To6: {increment: 1}}
-              });
-            }
-            else if (req.body.grade=="7" || req.body.grade=="8"){
-              const increment =await prisma.grades.update({
-                where: { id: 1 },
-                data: {from7To8: {increment: 1}}
-              });
-            }
-            else if (req.body.grade=="9" || req.body.grade=="10"){
-              const increment =await prisma.grades.update({
-                where: { id: 1 },
-                data: {from9To10: {increment: 1}}
-              });
-            }
-            else if (req.body.grade=="11" || req.body.grade=="12"){
-              const increment =await prisma.grades.update({
-                where: { id: 1 },
-                data: {from11T012: {increment: 1}}
-              });
-              console.log(increment)
-            }
-            else{
-              const increment =await prisma.grades.update({
-                where: { id: 1 },
-                data: {from1Ton4: {increment: 1}}
-              });
-              console.log(increment)
-            }
-          
-          }
-        )
-      }
       res.status(201).json({
         success: true,
         message: "student Registered.",
@@ -136,7 +149,7 @@ router.get("/useParent/:id", check_auth, async (req, res, next) => {
   try {
     const users = await prisma.student.findMany({
       where: {
-        parentId: Number(id),
+        parentId: id,
       },
       include: {
         parent: true,
@@ -183,7 +196,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
   try {
     const user = await prisma.student.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
       include: {
         parent: true,
@@ -205,7 +218,7 @@ router.patch("/:id", check_auth, async (req, res, next) => {
   try {
     const updatedUser = await prisma.student.update({
       where: {
-        id: Number(id),
+        id: id,
       },
       data: req.body,
       include: {
@@ -228,7 +241,7 @@ router.delete(
     try {
       const deletedUser = await prisma.student.delete({
         where: {
-          id: Number(id),
+          id: id,
         },
       });
       res.json({ message: `Deleted student ${id}`, deletedUser });

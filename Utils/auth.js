@@ -64,6 +64,7 @@ const adminRegister = async (req, res, next) => {
   try {
     log.flag("signing up...");
     const { email, password, role } = req.body;
+    
 
     if (
       !(
@@ -120,6 +121,7 @@ const userLogin = async (req, res, next) => {
         parent: true,
       },
     });
+    console.log(user)
     if (!user) {
       return res.status(404).json({
         status: false,
@@ -128,6 +130,7 @@ const userLogin = async (req, res, next) => {
     }
     // compare hashed password
     let isMatch = await bcrypt.compare(password, user.password);
+    console.log(isMatch)
     if (!isMatch)
       return res.status(400).json({ success: false, message: "Login Failed." });
 
@@ -210,6 +213,7 @@ const adminLogin = async (req, res, next) => {
       email: user.email,
       role: user.role,
     });
+    console.log(access_token)
     const refresh_token = createRefreshToken({
       id: user.id,
       email: user.email,

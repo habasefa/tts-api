@@ -120,7 +120,7 @@ router.get("/one/:id", check_auth, async (req, res, next) => {
   try {
     const reports = await prisma.report.findMany({
       where: {
-        tutorId: Number(val),
+        tutorId: val,
       },
       include: {
         tutor: true,
@@ -148,7 +148,7 @@ router.get("/one/rejected/:id", check_auth, async (req, res, next) => {
   try {
     const reports = await prisma.report.findMany({
       where: {
-        tutorId: Number(val),
+        tutorId: val,
         status:"FAILED"
       },
       include: {
@@ -192,7 +192,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
     const user = await prisma.report.findUnique({
       where: {
         
-        id: Number(id),
+        id: id,
       },
       include: {
         tutor: true,
@@ -216,7 +216,7 @@ router.patch("/:id", async (req, res, next) => {
   try {
     const updatedUser = await prisma.report.update({
       where: {
-        id: Number(id),
+        id: id,
       },
       data: req.body,
       include: {
@@ -238,7 +238,7 @@ router.delete("/:id", async (req, res, next) => {
   try {
     const deletedUser = await prisma.report.delete({
       where: {
-        id: Number(id),
+        id: id,
       },
     });
     res.json({ success: true, message: `Deleted report ${id}`, deletedUser });

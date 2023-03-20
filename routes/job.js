@@ -41,7 +41,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
   try {
     const user = await prisma.job.findUnique({
       where: {
-        id: Number(id),
+        id: id,
       },
       include: {
         tutors: true,
@@ -62,7 +62,7 @@ router.put("/:id", check_auth, async (req, res, next) => {
   try {
     const user = await prisma.job.update({
       where: {
-        id: Number(id),
+        id: id,
       },
       data: req.body,
       include: {
@@ -85,11 +85,11 @@ router.patch("/:id", async (req, res, next) => {
   try {
     const updatedUser = await prisma.job.update({
       where: {
-        id: Number(id),
+        id: id,
       },
       data: {
         tutors: {
-          connect: { id: Number(tutorId) },
+          connect: { id: tutorId },
         },
       },
       include: {
@@ -111,7 +111,7 @@ router.delete(
     try {
       const deletedUser = await prisma.job.delete({
         where: {
-          id: Number(id),
+          id: id,
         },
       });
       res.json({ success: true, message: `Deleted job ${id}`, deletedUser });
