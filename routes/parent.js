@@ -153,6 +153,70 @@ router.patch("/:id", async (req, res, next) => {
     next(error);
   }
 });
+router.post("/followUp", check_auth, async (req, res, next) => {
+  try {
+    const tutorFollowUp = await prisma.parentFollowup.create({
+      data: {
+        ...req.body,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Parent follow Up Registered.",
+      followUp: tutorFollowUp ,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.get("/followUp:id", check_auth, async (req, res, next) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    const user = await prisma.parentFollowup.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        tutor:true
+      },
+    });
+    console.log(user);
+    if (user) {
+      res.json({ success: true, message: `parent follow up ${id}`, user: user });
+    } else {
+      res.json({ success: false, message: `Parent follow up not found` });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/followUp:year", check_auth, async (req, res, next) => {
+  const { year } = req.params;
+  console.log(year);
+  try {
+    const user = await prisma.parentFollowup.findMany({
+      where: {
+        year: Number(year),
+      },
+      include: {
+        tutor:true
+      },
+    });
+    console.log(user);
+    if (user) {
+      res.json({ success: true, message: "List of Pending Tutors", user: user });
+    } else {
+      res.json({ success: false, message: `Parent followUp was found` });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.delete(
   "/:id",
@@ -170,7 +234,7 @@ router.delete(
       console.log(deletedUser)
       res.json({ success: true, message: `Deleted parent ${id}`, deletedUser });
     } catch (error) {
-      console.log(errror)
+      console.log(error)
       next(error);
     }
   }

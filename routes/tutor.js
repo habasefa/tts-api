@@ -207,6 +207,70 @@ router.get("/fetchTimeSheet/:id", check_auth, async (req, res, next) => {
     next(err);
   }
 });
+router.post("/followUp", check_auth, async (req, res, next) => {
+  try {
+    const tutorFollowUp = await prisma.tutorFollowup.create({
+      data: {
+        ...req.body,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Tutor follow Up Registered.",
+      followUp: tutorFollowUp ,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.get("/followUp:id", check_auth, async (req, res, next) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    const user = await prisma.tutorFollowup.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        tutor:true
+      },
+    });
+    console.log(user);
+    if (user) {
+      res.json({ success: true, message: `tutor ${id}`, user: user });
+    } else {
+      res.json({ success: false, message: `Tutor not found` });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/followUp:year", check_auth, async (req, res, next) => {
+  const { year } = req.params;
+  console.log(year);
+  try {
+    const user = await prisma.tutorFollowup.findMany({
+      where: {
+        year: Number(year),
+      },
+      include: {
+        tutor:true
+      },
+    });
+    console.log(user);
+    if (user) {
+      res.json({ success: true, message: "List of Pending Tutors", user: user });
+    } else {
+      res.json({ success: false, message: `tutor followUp was found` });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 router.post("/sendMessage", async (req, res, next) => {
   console.log("hi");
 });
@@ -287,13 +351,11 @@ router.patch("/image/:id", async (req, res, next) => {
       },
     });
     const phone = updatedUser.parent.phone1;
-    const TOKEN =process.env.MESSAGE_TOKEN
-     ;
+    const TOKEN = process.env.MESSAGE_TOKEN;
     const IDENTIFIER_ID = process.env.IDENTIFIER_ID;
     const SENDER_NAME = "";
     const RECIPIENT = phone;
-    const MESSAGE =
-      `Dear Parents, Temaribet reminding you to pay for your monthly tutoring session with ${updatedUser.tutor.fullName}. Please ensure payment by month end. Thank you`;
+    const MESSAGE = `Dear Parents, Temaribet reminding you to pay for your monthly tutoring session with ${updatedUser.tutor.fullName}. Please ensure payment by month end. Thank you`;
     const CALLBACK = "https://temaribet-api.onrender.com";
 
     const requestBody = {

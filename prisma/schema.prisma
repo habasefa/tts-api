@@ -63,6 +63,7 @@ model Tutor {
   status              Status    @default(PENDING)
   user                User?     @relation(fields: [userId], references: [id])
   userId              String?      @unique@db.ObjectId
+  followup            TutorFollowup[]
 }
 
 model Job {
@@ -147,6 +148,7 @@ model Parent {
   user           User?     @relation(fields: [userId], references: [id])
   userId         String?     @unique()  @db.ObjectId
   timeSheets      Image[]
+  followup        ParentFollowup[]
 }
 
 model Admin {
@@ -155,7 +157,6 @@ model Admin {
   password String
   role     Role   @default(ADMIN)
 }
-
 model Student {
   id                 String       @id @default(auto()) @map("_id") @db.ObjectId
   fullName            String   
@@ -177,6 +178,7 @@ model Student {
   parent              Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
   parentId            String   @db.ObjectId
   status              Status   @default(PENDING)
+  
 }
 
 model Grades {
@@ -210,7 +212,37 @@ model Image {
   statusOfMoneySent Status  @default(PENDING)
   parent           Parent    @relation(fields: [parentId], references: [id], onDelete: Cascade)
   parentId         String @db.ObjectId
+  statusOfMoneyPaid Status @default(PENDING)
   
+
+}
+model ParentFollowup {
+   id  String       @id @default(auto()) @map("_id") @db.ObjectId
+  parent           Parent    @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  parentId         String @db.ObjectId
+  month Int
+  year Int
+  comment String
+  satisfaction String
+  status String
+  
+}
+
+model TutorFollowup {
+  id  String       @id @default(auto()) @map("_id") @db.ObjectId
+  tutor           Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  tutorId         String @db.ObjectId
+  month Int
+  year Int
+  comment String
+  satisfaction String
+  status String
+  strength String
+  weakness String
+  opportunity String
+  threat String
+  assesment String
+  authenticity String
 
 }
 enum Gender {
