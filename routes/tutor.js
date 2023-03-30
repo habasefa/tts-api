@@ -67,7 +67,23 @@ router.get("/", check_auth, async (req, res, next) => {
     next(error);
   }
 });
-
+router.get("/all", check_auth, async (req, res, next) => {
+  console.log("hi");
+  try {
+    const users = await prisma.tutor.findMany({
+      include: {
+        students: true,
+        reports: true,
+        jobs: true,
+      },
+    });
+    console.log(users);
+    res.json({ success: true, message: "List of Tutors", users: users });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 router.get("/location/:location", check_auth, async (req, res, next) => {
   const { location } = req.params;
   console.log(location);
@@ -350,12 +366,37 @@ router.patch("/image/:id", async (req, res, next) => {
         parent: true,
       },
     });
+    
+   
+    console.log(updatedUser, "image");
+
+    res.json({ success: true, message: `Updated image ${id}`, updatedUser });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+router.patch("/imagestatus/:id", async (req, res, next) => {
+  const { id } = req.params;
+  console.log(id, "hi");
+  try {
+    const updatedUser = await prisma.image.update({
+      where: {
+        id: id,
+      },
+      data: req.body,
+      include: {
+        tutor: true,
+        parent: true,
+      },
+    });
+    
     const phone = updatedUser.parent.phone1;
     const TOKEN = process.env.MESSAGE_TOKEN;
     const IDENTIFIER_ID = process.env.IDENTIFIER_ID;
     const SENDER_NAME = "";
     const RECIPIENT = phone;
-    const MESSAGE = `Dear Parents, Temaribet reminding you to pay for your monthly tutoring session with ${updatedUser.tutor.fullName}. Please ensure payment by month end. Thank you`;
+    const MESSAGE = `Dear Parent, Temaribet reminding you to pay for your monthly tutoring session with ${updatedUser.tutor.fullName}. Please ensure payment by month end. Thank you`;
     const CALLBACK = "https://temaribet-api.onrender.com";
 
     const requestBody = {
@@ -376,6 +417,7 @@ router.patch("/image/:id", async (req, res, next) => {
       .then((response) => response.json())
       .then((data) => console.log(data))
       .catch((error) => console.error(error));
+  
     console.log(updatedUser, "image");
 
     res.json({ success: true, message: `Updated image ${id}`, updatedUser });

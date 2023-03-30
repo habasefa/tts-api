@@ -12,51 +12,50 @@ router.post(
   //   check_role(["PARENT", "ADMIN"]),
   async (req, res, next) => {
     try {
-      console.log(req.body)
+      console.log(req.body);
       const student = await prisma.student.create({
         data: {
           ...req.body,
         },
       });
-   
 
-      
-        if (req.body.grade=="K-G"){
-         
-         const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
-          where: {
-            id: 1,
-          },
-          update: {
-            kG: {
-              increment: 1,
+      if (req.body.grade == "K-G") {
+        const updatedGrades = await prisma.$transaction([
+          prisma.grades.upsert({
+            where: {
+              id: 1,
             },
-          },
-          create: {
-            id: 1,
-            kG: 1,
-          },
-        })])
-        }
-
-       else if (req.body.grade=="5" || req.body.grade=="6"){
-        const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
-          where: {
-            id: 1,
-          },
-          update: {
-            from5To6: {
-              increment: 1,
+            update: {
+              kG: {
+                increment: 1,
+              },
             },
-          },
-          create: {
-            id: 1,
-            from5To6: 1,
-          },
-        })])
-        }
-        else if (req.body.grade=="7" || req.body.grade=="8"){
-          const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+            create: {
+              id: 1,
+              kG: 1,
+            },
+          }),
+        ]);
+      } else if (req.body.grade == "5" || req.body.grade == "6") {
+        const updatedGrades = await prisma.$transaction([
+          prisma.grades.upsert({
+            where: {
+              id: 1,
+            },
+            update: {
+              from5To6: {
+                increment: 1,
+              },
+            },
+            create: {
+              id: 1,
+              from5To6: 1,
+            },
+          }),
+        ]);
+      } else if (req.body.grade == "7" || req.body.grade == "8") {
+        const updatedGrades = await prisma.$transaction([
+          prisma.grades.upsert({
             where: {
               id: 1,
             },
@@ -69,11 +68,11 @@ router.post(
               id: 1,
               from7To8: 1,
             },
-          })])
-         
-        }
-        else if (req.body.grade=="9" || req.body.grade=="10"){
-          const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+          }),
+        ]);
+      } else if (req.body.grade == "9" || req.body.grade == "10") {
+        const updatedGrades = await prisma.$transaction([
+          prisma.grades.upsert({
             where: {
               id: 1,
             },
@@ -86,11 +85,11 @@ router.post(
               id: 1,
               from9To10: 1,
             },
-          })])
-         
-        }
-        else if (req.body.grade=="11" || req.body.grade=="12"){
-          const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+          }),
+        ]);
+      } else if (req.body.grade == "11" || req.body.grade == "12") {
+        const updatedGrades = await prisma.$transaction([
+          prisma.grades.upsert({
             where: {
               id: 1,
             },
@@ -103,12 +102,11 @@ router.post(
               id: 1,
               from11T012: 1,
             },
-          })])
-          
-        }
-        else{
-        
-          const updatedGrades =await prisma.$transaction([   prisma.grades.upsert({
+          }),
+        ]);
+      } else {
+        const updatedGrades = await prisma.$transaction([
+          prisma.grades.upsert({
             where: {
               id: 1,
             },
@@ -121,22 +119,19 @@ router.post(
               id: 1,
               from1Ton4: 1,
             },
-          })])
-        
+          }),
+        ]);
+      }
 
-        }
-        
-        
-        console.log()
-       
-    
+      console.log();
+
       res.status(201).json({
         success: true,
         message: "student Registered.",
         student,
       });
     } catch (error) {
-     console.log(error)
+      console.log(error);
       next(error);
     }
   }
@@ -144,8 +139,8 @@ router.post(
 
 router.get("/useParent/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
-  console.log(id)
-  console.log("hi")
+  console.log(id);
+  console.log("hi");
   try {
     const users = await prisma.student.findMany({
       where: {
@@ -175,21 +170,22 @@ router.get("/", check_auth, async (req, res, next) => {
     next(error);
   }
 });
-router.get('/byGrade',check_auth,async (req,res,next)=>{
-  try{
+router.get("/byGrade", check_auth, async (req, res, next) => {
+  try {
     const gradeNumber = await prisma.grades.findUnique({
-      where:{
-        id:1
-      }
-    })
-    res.json({success: true, message : "Number of Students in their respective grade", gradeNumber: gradeNumber });
-
-    
-  }
-  catch(error){
+      where: {
+        id: 1,
+      },
+    });
+    res.json({
+      success: true,
+      message: "Number of Students in their respective grade",
+      gradeNumber: gradeNumber,
+    });
+  } catch (error) {
     next(error);
   }
-})
+});
 
 router.get("/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
@@ -200,19 +196,60 @@ router.get("/:id", check_auth, async (req, res, next) => {
       },
       include: {
         parent: true,
-        tutor: true,
+        tutors: true,
       },
     });
+    console.log(user,"why")
     if (user) {
       res.json({ success: true, message: `student ${id}`, user: user });
     } else {
       res.json({ success: false, message: `student not found` });
     }
   } catch (error) {
+    console.log(error)
     next(error);
   }
 });
 
+router.patch("/addTutor/:id", check_auth, async (req, res, next) => {
+  console.log("find")
+  const { id } = req.params;
+  const { tutorId ,status} = req.body;
+  try {
+    const updatedStudent = await prisma.student.update({
+      where: {
+        id: id,
+      },
+      data: {
+        tutors: {
+          connect: {
+            id: tutorId,
+          },
+        },
+        status:status
+      },
+      include: {
+        parent: true,
+        tutors: true,
+      },
+    });
+    const updatedUser = await prisma.tutor.update({
+      where: {
+        id: tutorId,
+      },
+      data: {status:status},
+      include: {
+        students: true,
+        jobs: true,
+        reports: true,
+      },
+    });
+    console.log(updatedStudent,"check")
+    res.json({ success: true, message: `Updated student ${id}`, updatedStudent , updatedUser});
+  } catch (error) {
+    next(error);
+  }
+});
 router.patch("/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -250,6 +287,5 @@ router.delete(
     }
   }
 );
-
 
 module.exports = router;

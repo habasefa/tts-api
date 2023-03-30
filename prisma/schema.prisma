@@ -58,7 +58,8 @@ model Tutor {
   timeSheets          Image []
   jobIDs       String[] @db.ObjectId
   jobs                Job[]  @relation(fields: [jobIDs], references: [id])
-  students            Student[]
+ studentIds String[] @db.ObjectId
+  students   Student[] @relation( fields: [studentIds], references: [id])
   role                Role      @default(TUTOR)
   status              Status    @default(PENDING)
   user                User?     @relation(fields: [userId], references: [id])
@@ -106,6 +107,7 @@ model Report {
   tutorName       String
   rate         Int   @default(0)
   status      Status   @default(PENDING)
+  view      View @default(PENDING)
 }
 // model Report {
 //   id              Int      @id @default(autoincrement())
@@ -173,8 +175,8 @@ model Student {
   idealTutor          String?
   workDays            Int?
   workHour            Int?
-  tutor               Tutor?   @relation(fields: [tutorId], references: [id])
-  tutorId             String?  @db.ObjectId
+  tutorIds           String[] @db.ObjectId
+  tutors     Tutor[]  @relation(fields: [tutorIds], references: [id])
   parent              Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
   parentId            String   @db.ObjectId
   status              Status   @default(PENDING)
@@ -213,6 +215,7 @@ model Image {
   parent           Parent    @relation(fields: [parentId], references: [id], onDelete: Cascade)
   parentId         String @db.ObjectId
   statusOfMoneyPaid Status @default(PENDING)
+  view      View @default(PENDING)
   
 
 }
@@ -262,4 +265,9 @@ enum Status {
   FAILED
   SUCCESS
   REJECTED
+}
+
+enum View {
+  SEEN
+  PENDING
 }
