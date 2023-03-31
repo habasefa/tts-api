@@ -247,6 +247,7 @@ router.patch("/addTutor/:id", check_auth, async (req, res, next) => {
     console.log(updatedStudent,"check")
     res.json({ success: true, message: `Updated student ${id}`, updatedStudent , updatedUser});
   } catch (error) {
+    console.log(error)
     next(error);
   }
 });
