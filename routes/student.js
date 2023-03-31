@@ -196,7 +196,7 @@ router.get("/:id", check_auth, async (req, res, next) => {
       },
       include: {
         parent: true,
-        tutors: true,
+       
       },
     });
     console.log(user,"why")
@@ -230,7 +230,7 @@ router.patch("/addTutor/:id", check_auth, async (req, res, next) => {
       },
       include: {
         parent: true,
-        tutors: true,
+       
       },
     });
     const updatedUser = await prisma.tutor.update({
