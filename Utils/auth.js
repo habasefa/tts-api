@@ -241,6 +241,7 @@ const adminLogin = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({
       success: false,
+      status:500,
       message: error.toString(),
     });
     next(error);
