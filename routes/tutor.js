@@ -305,6 +305,18 @@ router.post(
       console.log(result.url);
       const data = JSON.parse(req.body.data);
       console.log(data);
+      const existingImage = await prisma.image.findFirst({
+        where: {
+          tutorId: data?.tutorId,
+          parentId: data?.parentId,
+          month: data?.month,
+        },
+      });
+  
+      // If the image already exists, return success: true and duplication: true
+      if (existingImage) {
+        return res.json({ success: true, duplication: true });
+      }
 
       const image = await prisma.image.create({
         data: {
@@ -317,7 +329,7 @@ router.post(
         },
       });
       console.log(image);
-      res.json({ success: true, message: "Image Created", image });
+      res.json({ success: true, duplication: false, message: "Image Created", image });
     } catch (err) {
       console.log(err);
       next(err);
