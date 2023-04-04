@@ -1,6 +1,6 @@
 require("dotenv").config();
 const router = require("express").Router();
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, Status } = require("@prisma/client");
 const cloudinary = require("../Utils/cloudinary");
 const upload = require("../Utils/multer");
 const check_auth = require("../middlewares/check_auth");
@@ -90,7 +90,8 @@ router.get("/location/:location", check_auth, async (req, res, next) => {
   try {
     const users = await prisma.tutor.findMany({
       where: {
-        location: String(location),
+        location:{ 
+        contains: String(location).toLowerCase()}
       },
       include: {
         students: true,
@@ -364,6 +365,42 @@ router.get("/fetchImage/:year", check_auth, async (req, res, next) => {
     next(error);
   }
 });
+router.get("/image/rejected/:id", check_auth, async (req, res, next) => {
+  const val = req.params.id;
+  console.log(req.params);
+  console.log(val);
+  try {
+    const timeSheets = await prisma.image.findMany({
+      where: {
+        tutorId: val,
+        statusOfAcceptance: {
+          in: [Status.SUCCESS, Status.REJECTED]
+        }
+      },
+      orderBy: [
+       { year: 'desc'},
+        {month: 'desc'}
+      ],
+      include: {
+        tutor: true,
+        parent:true,
+      },
+    });
+    console.log(timeSheets);
+    if (timeSheets) {
+      res.json({
+        success: true,
+        message: " List of image",
+        timeSheets: timeSheets,
+      });
+    } else {
+      res.json({ success: false, message: `image not found` });
+    }
+  } catch (error) {
+    console.log(error)
+    next(error);
+  }
+});
 router.patch("/image/:id", async (req, res, next) => {
   const { id } = req.params;
   console.log(id, "hi");
@@ -436,6 +473,23 @@ router.patch("/imagestatus/:id", async (req, res, next) => {
   } catch (error) {
     console.log(error);
     next(error);
+  }
+});
+
+router.delete("/image/:id", async (req, res, next) => {
+  const { id } = req.params;
+  console.log(id,'find')
+  try {
+    const deletedTimesheet = await prisma.image.delete({
+      where: {
+        id: id,
+      },
+    });
+    res.json({ success: true, message: `Deleted timesheet ${id}`, deletedTimesheet });
+  } catch (error) {
+    console.log(error)
+    next(error);
+    
   }
 });
 module.exports = router;

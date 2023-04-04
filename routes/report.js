@@ -1,6 +1,6 @@
 require("dotenv").config();
 const router = require("express").Router();
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, Status } = require("@prisma/client");
 
 const check_auth = require("../middlewares/check_auth");
 const { createCalander } = require("../Utils/calenderCreator");
@@ -149,12 +149,20 @@ router.get("/one/rejected/:id", check_auth, async (req, res, next) => {
     const reports = await prisma.report.findMany({
       where: {
         tutorId: val,
-        status:"FAILED"
+        status: {
+          in: [Status.SUCCESS, Status.REJECTED]
+        }
       },
+      orderBy: [
+        { reportYear: 'desc' },
+        { reportMonth: 'desc' },
+        { reportDate: 'desc' }
+      ],
       include: {
         tutor: true,
       },
     });
+    
     console.log(reports);
     if (reports) {
       res.json({
