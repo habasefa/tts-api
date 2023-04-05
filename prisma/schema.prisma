@@ -258,6 +258,9 @@ enum Role {
   PARENT
   ADMIN
   SUPERADMIN
+  ADMINONE
+  ADMINTWO
+  ADMINTHREE
 }
 
 enum Status {
