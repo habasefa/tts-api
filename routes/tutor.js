@@ -303,6 +303,7 @@ router.post(
       console.log(req.body);
       const result = await cloudinary.uploader.upload(req.file.path);
       // Create new user
+      
       console.log(result.url);
       const data = JSON.parse(req.body.data);
       console.log(data);
@@ -492,4 +493,26 @@ router.delete("/image/:id", async (req, res, next) => {
     
   }
 });
+
+router.get("/image/:id", async (req, res, next) => {
+  const { id } = req.params;
+  console.log(id,'find')
+  try {
+    const fetchedTimesheet = await prisma.image.findUnique({
+      where: {
+        id: id,
+      },
+      include:{
+        parent:true,
+        tutor:true,
+      }
+    });
+    res.json({ success: true, message: `fetched timesheet ${id}`, fetchedTimesheet });
+  } catch (error) {
+    console.log(error)
+    next(error);
+    
+  }
+});
+
 module.exports = router;
