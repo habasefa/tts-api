@@ -251,6 +251,69 @@ router.patch("/addTutor/:id", check_auth, async (req, res, next) => {
     next(error);
   }
 });
+router.patch("/removeTutor/:id", check_auth, async (req, res, next) => {
+  const { id } = req.params;
+  const { tutorId } = req.body;
+
+  try {
+    const updatedStudent = await prisma.student.update({
+      where: {
+        id: id,
+      },
+      data: {
+        tutors: {
+          disconnect: {
+            id: tutorId,
+          },
+        },
+      },
+      include: {
+        parent: true,
+        tutors: true,
+      },
+    });
+    const updatedTutor = await prisma.tutor.findUnique({
+      where: {
+        id: tutorId,
+      },
+      include: {
+        
+        jobs: true,
+        reports: true,
+      },
+    });
+
+    // check if the student's list of tutors is empty
+    if (updatedStudent.tutorIds.length === 0) {
+      await prisma.student.update({
+        where: {
+          id: id,
+        },
+        data: {
+          status: "PENDING",
+        },
+      });
+    }
+
+    // check if the tutor's list of students is empty
+    if (updatedTutor.studentIds.length === 0) {
+      await prisma.tutor.update({
+        where: {
+          id: tutorId,
+        },
+        data: {
+          status: "PENDING",
+        },
+      });
+    }
+
+    res.json({ success: true, message: `Removed tutor ${tutorId} from student ${id}`, updatedStudent, updatedTutor });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
 router.patch("/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
   try {
