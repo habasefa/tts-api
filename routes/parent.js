@@ -1,6 +1,6 @@
 require("dotenv").config();
 const router = require("express").Router();
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, Status } = require("@prisma/client");
 
 const check_auth = require("../middlewares/check_auth");
 const check_role = require("../middlewares/check_role");
@@ -73,6 +73,22 @@ router.get("/pending", check_auth, async (req, res, next) => {
       },
     });
     res.json({ success: true, message: "List of Parents", users: users });
+  } catch (error) {
+    next(error);
+  }
+});
+router.get("/failed", check_auth, async (req, res, next) => {
+  try {
+    const users = await prisma.parent.findMany({
+      where :{
+        
+        status : Status.FAILED
+      },
+      include: {
+        students: true,
+      },
+    });
+    res.json({ success: true, message: "List of fAILED Parents", users: users });
   } catch (error) {
     next(error);
   }
