@@ -75,7 +75,7 @@ router.get("/pending", check_auth, async (req, res, next) => {
     // Map the `parent` objects to include their creation time
     const formattedUsers = users.map(user => {
       const timestamp = parseInt(user.id.toString().substring(0, 8), 16) * 1000; // Extract the creation time from the `ObjectId`
-      const createdAt = new Date(timestamp).toLocaleString(); // Convert the timestamp to a readable date and time string
+      const createdAt = new Date(timestamp); // Convert the timestamp to a readable date and time string
       return {
         ...user,
         createdAt
