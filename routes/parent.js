@@ -64,16 +64,43 @@ router.post("/", async (req, res, next) => {
 router.get("/pending", check_auth, async (req, res, next) => {
   try {
     const users = await prisma.parent.findMany({
-      where :{
-        
-        status : "PENDING"
+      where: {
+        status: "PENDING"
       },
       include: {
-        students: true,
-      },
+        students: true
+      }
     });
-    res.json({ success: true, message: "List of Parents", users: users });
+
+    // Map the `parent` objects to include their creation time
+    const formattedUsers = users.map(user => {
+      const timestamp = parseInt(user.id.toString().substring(0, 8), 16) * 1000; // Extract the creation time from the `ObjectId`
+      const createdAt = new Date(timestamp).toLocaleString(); // Convert the timestamp to a readable date and time string
+      return {
+        ...user,
+        createdAt
+      };
+    });
+
+    // Sort the `formattedUsers` array by creation time
+    formattedUsers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    
+
+
+    res.json({ success: true, message: "List of Parents", users: formattedUsers });
+    // const users = await prisma.parent.findMany({
+    //   where :{
+        
+    //     status : "PENDING"
+    //   },
+    //   include: {
+    //     students: true,
+    //   },
+    // });
+    // res.json({ success: true, message: "List of Parents", users: users });
   } catch (error) {
+    console.log(error)
     next(error);
   }
 });
