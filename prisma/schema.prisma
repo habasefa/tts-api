@@ -83,6 +83,7 @@ model Job {
   status       Status   @default(PENDING)
 }
 model Report {
+  
   id              String       @id @default(auto()) @map("_id") @db.ObjectId
   totalDays       String
   totalHours      String
@@ -104,10 +105,13 @@ model Report {
   reportYear      Int
   tutor           Tutor    @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   tutorId         String @db.ObjectId
+  parent           Parent    @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  parentId         String @db.ObjectId
   tutorName       String
   rate         Int   @default(0)
   status      Status   @default(PENDING)
   view      View @default(PENDING)
+  actionBy  String
 }
 // model Report {
 //   id              Int      @id @default(autoincrement())
@@ -151,6 +155,8 @@ model Parent {
   userId         String?     @unique()  @db.ObjectId
   timeSheets      Image[]
   followup        ParentFollowup[]
+  reports         Report[]
+  
 }
 
 model Admin {
@@ -180,6 +186,7 @@ model Student {
   parent              Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
   parentId            String   @db.ObjectId
   status              Status   @default(PENDING)
+  actionBy  String
   
 }
 

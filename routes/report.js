@@ -15,11 +15,15 @@ router.post("/", check_auth, async (req, res, next) => {
     const countWeek = weeks[1];
     const reportsWithId = await prisma.report.findMany({
       where: {
+        parentId:req.body.parentId,
         tutorId: req.body.tutorId,
         reportMonth: req.body.reportMonth,
         reportYear: req.body.reportYear,
+        
+        
       },
     });
+   
 
     reportsWithId.map((repo, index) => {
       const date = repo.reportDate;
@@ -81,6 +85,42 @@ router.post("/", check_auth, async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
+    next(error);
+  }
+});
+
+router.get("/specific/:tutorId/:year/:month/:week", check_auth, async(req,res, next)=>{
+  
+  
+  const month = req.params.month;
+  const year = req.params.year;
+  const tutorId = req.params.tutorId;
+  const week = req.params.week;
+  console.log(week,year,tutorId,month)
+  try {
+    const reports = await prisma.report.findMany({
+      where: {
+        reportMonth: Number(month) ,
+        reportYear:Number(year),
+        tutorId:tutorId,
+        week:week
+      },
+      include: {
+        tutor: true,
+        parent:true,
+      },
+    });
+   
+    if (reports) {
+      res.json({
+        success: true,
+        message: " List of reports",
+        reports: reports,
+      });
+    } else {
+      res.json({ success: false, message: `report not found` });
+    }
+  } catch (error) {
     next(error);
   }
 });
