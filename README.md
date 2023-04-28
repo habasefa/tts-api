@@ -1,2 +1,2 @@
 # Temaribet-API
-## Node Express with Mongodb
+## Node Express with Postgresql

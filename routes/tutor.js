@@ -116,7 +116,6 @@ router.get("/:id", check_auth, async (req, res, next) => {
       },
       include: {
         students: true,
-
         reports: true,
         jobs: true,
       },
