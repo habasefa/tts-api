@@ -114,7 +114,7 @@ const userLogin = async (req, res, next) => {
 
     const user = await prisma.user.findFirst({
       where: {
-        email: email,
+        email: String(email).toLowerCase(),
       },
       include: {
         tutor: true,
