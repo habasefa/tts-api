@@ -152,10 +152,24 @@ router.patch("/forgotPassword", async (req, res, next) => {
 
 router.patch("/:id", check_auth, async (req, res, next) => {
   const { id } = req.params;
-  const {password } = req.body;
+  const {password,oldPassword } = req.body;
   
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await prisma.user.findFirst({
+      where: {
+        id:id
+      },
+      include: {
+        tutor: true,
+        parent: true,
+      },
+    });
+    // compare hashed password
+    let isMatch = await bcrypt.compare(oldPassword, user.password);
+    console.log(isMatch)
+    if (!isMatch)
+      return res.status(400).json({ success: false, message: " Please enter correct old password " });
     const updatedUser = await prisma.user.update({
       where: {
         id: id,
@@ -165,8 +179,6 @@ router.patch("/:id", check_auth, async (req, res, next) => {
         parent: true,
       },
       data: {
-        
-        ...req.body,
         password : hashedPassword,
       },
     });
@@ -177,7 +189,8 @@ router.patch("/:id", check_auth, async (req, res, next) => {
       user: updatedUser,
     });
   } catch (error) {
-    res.json({ success: false, message: "Something went wrong." });
+    console.log(error)
+    res.json({ success: false, message:error });
     next(error);
   }
 });
