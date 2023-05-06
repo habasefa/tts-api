@@ -179,6 +179,7 @@ router.patch("/:id", check_auth, async (req, res, next) => {
         parent: true,
       },
       data: {
+
         password : hashedPassword,
       },
     });
@@ -190,7 +191,7 @@ router.patch("/:id", check_auth, async (req, res, next) => {
     });
   } catch (error) {
     console.log(error)
-    res.json({ success: false, message:error });
+    res.json({ success: false, message:"Something went wrong." });
     next(error);
   }
 });
