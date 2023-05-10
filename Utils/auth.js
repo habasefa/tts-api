@@ -110,12 +110,18 @@ const adminRegister = async (req, res, next) => {
 const userLogin = async (req, res, next) => {
   try {
     log.flag("logging in...");
+    log.flag(req.body);
     let { email, password } = req.body;
-
+    console.log(email,password)
     const user = await prisma.user.findFirst({
       where: {
-        email: String(email).toLowerCase(),
-      },
+        email:{
+          contains: String(email).toLowerCase(),
+          mode: 'insensitive'
+        },
+        },
+       
+      
       include: {
         tutor: true,
         parent: true,
@@ -180,7 +186,10 @@ const adminLogin = async (req, res, next) => {
     console.log(email,password)
     const user = await prisma.user.findFirst({
       where: {
-        email: email,
+        email:{
+          contains: String(email).toLowerCase(),
+          mode: 'insensitive'
+        },
       },
       include: {
         tutor: true,
