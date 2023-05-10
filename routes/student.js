@@ -324,7 +324,7 @@ router.patch("/:id", check_auth, async (req, res, next) => {
       data: req.body,
       include: {
         parent: true,
-        tutor: true,
+        tutors: true,
       },
     });
     res.json({ success: true, message: `Updated student ${id}`, updatedUser });
