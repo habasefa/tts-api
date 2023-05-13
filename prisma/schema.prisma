@@ -111,7 +111,7 @@ model Report {
   rate         Int   @default(0)
   status      Status   @default(PENDING)
   view      View @default(PENDING)
-  
+  comment         String?
 }
 // model Report {
 //   id              Int      @id @default(autoincrement())
