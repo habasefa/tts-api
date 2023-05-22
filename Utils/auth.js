@@ -138,7 +138,7 @@ const userLogin = async (req, res, next) => {
     let isMatch = await bcrypt.compare(password, user.password);
     console.log(isMatch)
     if (!isMatch)
-      return res.status(400).json({ success: false, message: "Login Failed." });
+      return res.status(400).json({ success: false, message: "Incorrect Password." });
 
     const access_token = createAccessToken({
       id: user.id,
