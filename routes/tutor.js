@@ -352,10 +352,18 @@ router.get("/fetchImage/:year", check_auth, async (req, res, next) => {
     });
     console.log(timeSheets);
     if (timeSheets) {
+      const formattedTimesheet = timeSheets.map(user => {
+        const timestamp = parseInt(user.id.toString().substring(0, 8), 16) * 1000; // Extract the creation time from the `ObjectId`
+        const createdAt = new Date(timestamp); // Convert the timestamp to a readable date and time string
+        return {
+          ...user,
+          createdAt
+        };
+      });
       res.json({
         success: true,
         message: " List of TimeSheets",
-        timeSheets: timeSheets,
+        timeSheets: formattedTimesheet,
       });
     } else {
       res.json({ success: false, message: `timeSheet not found` });
