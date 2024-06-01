@@ -11,6 +11,7 @@ const prisma = new PrismaClient();
 router.post("/register", async (req, res, next) => {
   await adminRegister(req, res, next);
 });
+
 // Login Admins
 router.post("/login", async (req, res, next) => {
   await adminLogin(req, res, next);

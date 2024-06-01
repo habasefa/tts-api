@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const http = require('https');
+const http = require("https");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -54,12 +54,28 @@ app.use((error, req, res, next) => {
   });
 });
 
-setInterval(()=>{
-  console.log("every 10 min")
-  http.get('https://temaribet-api.onrender.com');
+// keep server alive
+const minInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
+const maxInterval = 15 * 60 * 1000; // 15 minutes in milliseconds
 
-},10 * 60 * 1000)
+function getRandomInterval() {
+  return Math.floor(
+    Math.random() * (maxInterval - minInterval + 1) + minInterval
+  );
+}
+
+function keepServerAlive() {
+  let count = 0;
+  console.log("Calling server to keep it alive...");
+  http.get("https://temaribet-api.onrender.com");
+  count++;
+
+  const interval = getRandomInterval();
+  setTimeout(keepServerAlive, interval);
+}
+
 // listen to server
 app.listen(port, () => {
   log.success(`Server is running on port ${port}.`);
+  keepServerAlive();
 });

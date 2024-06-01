@@ -1,5 +1,5 @@
 {
-  "name": "temaribet-api",
+  "name": "tts-api",
   "version": "1.0.0",
   "description": "Temaribet api built with nodejs express mongodb",
   "main": "index.js",

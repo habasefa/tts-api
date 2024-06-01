@@ -16,6 +16,7 @@ router.post("/", check_auth, async (req, res, next) => {
         ...req.body,
       },
     });
+
     res.status(201).json({
       success: true,
       message: "Tutor Registered.",
@@ -48,7 +49,6 @@ router.get("/pending", check_auth, async (req, res, next) => {
   }
 });
 router.get("/", check_auth, async (req, res, next) => {
-  console.log("hi");
   try {
     const users = await prisma.tutor.findMany({
       where: {
@@ -90,8 +90,9 @@ router.get("/location/:location", check_auth, async (req, res, next) => {
   try {
     const users = await prisma.tutor.findMany({
       where: {
-        location:{ 
-        contains: String(location).toLowerCase()}
+        location: {
+          contains: String(location).toLowerCase(),
+        },
       },
       include: {
         students: true,
@@ -234,7 +235,7 @@ router.post("/followUp", check_auth, async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: "Tutor follow Up Registered.",
-      followUp: tutorFollowUp ,
+      followUp: tutorFollowUp,
     });
   } catch (error) {
     console.log(error);
@@ -251,7 +252,7 @@ router.get("/followUp:id", check_auth, async (req, res, next) => {
         id: id,
       },
       include: {
-        tutor:true
+        tutor: true,
       },
     });
     console.log(user);
@@ -274,12 +275,16 @@ router.get("/followUp:year", check_auth, async (req, res, next) => {
         year: Number(year),
       },
       include: {
-        tutor:true
+        tutor: true,
       },
     });
     console.log(user);
     if (user) {
-      res.json({ success: true, message: "List of Pending Tutors", user: user });
+      res.json({
+        success: true,
+        message: "List of Pending Tutors",
+        user: user,
+      });
     } else {
       res.json({ success: false, message: `tutor followUp was found` });
     }
@@ -302,7 +307,7 @@ router.post(
       console.log(req.body);
       const result = await cloudinary.uploader.upload(req.file.path);
       // Create new user
-      
+
       console.log(result.url);
       const data = JSON.parse(req.body.data);
       console.log(data);
@@ -313,7 +318,7 @@ router.post(
           month: data?.month,
         },
       });
-  
+
       // If the image already exists, return success: true and duplication: true
       if (existingImage) {
         return res.json({ success: true, duplication: true });
@@ -330,7 +335,12 @@ router.post(
         },
       });
       console.log(image);
-      res.json({ success: true, duplication: false, message: "Image Created", image });
+      res.json({
+        success: true,
+        duplication: false,
+        message: "Image Created",
+        image,
+      });
     } catch (err) {
       console.log(err);
       next(err);
@@ -352,12 +362,13 @@ router.get("/fetchImage/:year", check_auth, async (req, res, next) => {
     });
     console.log(timeSheets);
     if (timeSheets) {
-      const formattedTimesheet = timeSheets.map(user => {
-        const timestamp = parseInt(user.id.toString().substring(0, 8), 16) * 1000; // Extract the creation time from the `ObjectId`
+      const formattedTimesheet = timeSheets.map((user) => {
+        const timestamp =
+          parseInt(user.id.toString().substring(0, 8), 16) * 1000; // Extract the creation time from the `ObjectId`
         const createdAt = new Date(timestamp); // Convert the timestamp to a readable date and time string
         return {
           ...user,
-          createdAt
+          createdAt,
         };
       });
       res.json({
@@ -382,16 +393,13 @@ router.get("/image/rejected/:id", check_auth, async (req, res, next) => {
       where: {
         tutorId: val,
         statusOfAcceptance: {
-          in: [Status.SUCCESS, Status.REJECTED]
-        }
+          in: [Status.SUCCESS, Status.REJECTED],
+        },
       },
-      orderBy: [
-       { year: 'desc'},
-        {month: 'desc'}
-      ],
+      orderBy: [{ year: "desc" }, { month: "desc" }],
       include: {
         tutor: true,
-        parent:true,
+        parent: true,
       },
     });
     console.log(timeSheets);
@@ -405,7 +413,7 @@ router.get("/image/rejected/:id", check_auth, async (req, res, next) => {
       res.json({ success: false, message: `image not found` });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     next(error);
   }
 });
@@ -423,8 +431,7 @@ router.patch("/image/:id", async (req, res, next) => {
         parent: true,
       },
     });
-    
-   
+
     console.log(updatedUser, "image");
 
     res.json({ success: true, message: `Updated image ${id}`, updatedUser });
@@ -447,7 +454,7 @@ router.patch("/imagestatus/:id", async (req, res, next) => {
         parent: true,
       },
     });
-    
+
     const phone = updatedUser.parent.phone1;
     const TOKEN = process.env.MESSAGE_TOKEN;
     const IDENTIFIER_ID = process.env.IDENTIFIER_ID;
@@ -474,7 +481,7 @@ router.patch("/imagestatus/:id", async (req, res, next) => {
       .then((response) => response.json())
       .then((data) => console.log(data))
       .catch((error) => console.error(error));
-  
+
     console.log(updatedUser, "image");
 
     res.json({ success: true, message: `Updated image ${id}`, updatedUser });
@@ -486,39 +493,45 @@ router.patch("/imagestatus/:id", async (req, res, next) => {
 
 router.delete("/image/:id", async (req, res, next) => {
   const { id } = req.params;
-  console.log(id,'find')
+  console.log(id, "find");
   try {
     const deletedTimesheet = await prisma.image.delete({
       where: {
         id: id,
       },
     });
-    res.json({ success: true, message: `Deleted timesheet ${id}`, deletedTimesheet });
+    res.json({
+      success: true,
+      message: `Deleted timesheet ${id}`,
+      deletedTimesheet,
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     next(error);
-    
   }
 });
 
 router.get("/image/:id", async (req, res, next) => {
   const { id } = req.params;
-  console.log(id,'find')
+  console.log(id, "find");
   try {
     const fetchedTimesheet = await prisma.image.findUnique({
       where: {
         id: id,
       },
-      include:{
-        parent:true,
-        tutor:true,
-      }
+      include: {
+        parent: true,
+        tutor: true,
+      },
     });
-    res.json({ success: true, message: `fetched timesheet ${id}`, fetchedTimesheet });
+    res.json({
+      success: true,
+      message: `fetched timesheet ${id}`,
+      fetchedTimesheet,
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     next(error);
-    
   }
 });
 
