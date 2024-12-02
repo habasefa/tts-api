@@ -67,6 +67,15 @@ flowchart TD
     MongoDB_Database --> Express_Backend
     Client_UI --> Express_Backend
 ```
+```mermaid
+flowchart TD
+    Client_UI -->|HTTP Requests| Express_Backend
+    Express_Backend -->|ORM| Prisma_ORM
+    Prisma_ORM -->|Database Operations| MongoDB_Database
+```
+
+
+
 
 ## Setup Instructions
 
