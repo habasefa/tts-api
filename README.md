@@ -59,14 +59,13 @@ C[MongoDB (Database)]
 D[Prisma ORM] -->
 
 ```mermaid
-
 flowchart TD
-    Client (UI) --> Express.js (Backend)
-    Express.js (Backend) --> MongoDB (Database)
-    Express.js (Backend) --> Prisma ORM
-    Prisma ORM --> Express.js (Backend)
-    MongoDB (Database) --> Express.js (Backend)
-    Client (UI) --> Express.js (Backend)
+    Client_UI --> Express_Backend
+    Express_Backend --> MongoDB_Database
+    Express_Backend --> Prisma_ORM
+    Prisma_ORM --> Express_Backend
+    MongoDB_Database --> Express_Backend
+    Client_UI --> Express_Backend
 ```
 
 ## Setup Instructions
