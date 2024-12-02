@@ -61,12 +61,12 @@ D[Prisma ORM] -->
 ```mermaid
 
 flowchart TD
-    A--> B
-    B --> C
-    B --> D
-    D --> B
-    C --> B
-    A --> B
+    A[Client (UI)] --> B[Express.js (Backend)]
+    B[Express.js (Backend)] --> C[MongoDB (Database)]
+    B[Express.js (Backend)] --> D[Prisma ORM]
+    D[Prisma ORM] --> B[Express.js (Backend)]
+    C[MongoDB (Database)] --> B[Express.js (Backend)]
+    A[Client (UI)] --> B[Express.js (Backend)]
 ```
 
 ## Setup Instructions
