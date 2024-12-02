@@ -32,7 +32,10 @@ This repository hosts the backend for [Temaribet](https://temaribet.net/),a prof
 ```
 
 ## Architecture Diagram
-    +-------------------+       +-------------------+       +-------------------+
+
+```plaintext
+
++-------------------+       +-------------------+       +-------------------+
 |                   |       |                   |       |                   |
 |   Client (UI)     +------->   Express.js      +------->   MongoDB         |
 |                   |       |   (Backend)       |       |   (Database)      |
@@ -47,7 +50,7 @@ This repository hosts the backend for [Temaribet](https://temaribet.net/),a prof
                             +-------------------+
 
 
-                            
+```                        
 
 ## Setup Instructions
 
