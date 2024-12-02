@@ -53,6 +53,7 @@ This repository hosts the backend for [Temaribet](https://temaribet.net/),a prof
 ```        
 
 ```mermaid
+
 flowchart TD
     A[Client (UI)] --> B[Express.js (Backend)]
     B --> C[MongoDB (Database)]
