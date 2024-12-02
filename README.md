@@ -79,4 +79,4 @@ flowchart TD
     ```
 
 5. **Access the application**:
-   The application will be accessible at [http://localhost:3000](http://localhost:3000).
+   The application will be accessible at [http://localhost:4000](http://localhost:4000).
