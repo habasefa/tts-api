@@ -60,12 +60,12 @@ D[Prisma ORM] -->
 
 ```mermaid
 flowchart TD
-    Client_UI --> Express_Backend
-    Express_Backend --> MongoDB_Database
-    Express_Backend --> Prisma_ORM
-    Prisma_ORM --> Express_Backend
-    MongoDB_Database --> Express_Backend
-    Client_UI --> Express_Backend
+    Client_UI -->|HTTP Requests| Express_Backend
+    Express_Backend -->|ORM| Prisma_ORM
+    Prisma_ORM -->|Database Operations| MongoDB_Database
+    MongoDB_Database -->|Responses| Prisma_ORM
+    Prisma_ORM -->|Responses| Express_Backend
+    Express_Backend -->|HTTP Responses| Client_UI
 ```
 ```mermaid
 flowchart TD
