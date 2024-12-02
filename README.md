@@ -52,12 +52,18 @@ This repository hosts the backend for [Temaribet](https://temaribet.net/),a prof
 
 ```        
 
+ <!-- 
+A[Client (UI)]  
+B[Express.js (Backend)]
+C[MongoDB (Database)]
+D[Prisma ORM] -->
+
 ```mermaid
 
 flowchart TD
-    A[Client (UI)] --> B[Express.js (Backend)]
-    B --> C[MongoDB (Database)]
-    B --> D[Prisma ORM]
+    A--> B
+    B --> C
+    B --> D
     D --> B
     C --> B
     A --> B
