@@ -186,7 +186,6 @@ model Student {
   parent              Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
   parentId            String   @db.ObjectId
   status              Status   @default(PENDING)
- 
   
 }
 
