@@ -320,7 +320,7 @@ router.delete('/:id', async (req, res, next) => {
     }
 })
 
-router.patch('/approve/:id', check_auth, async (req, res, next) => {
+router.patch('/:id/approve', check_auth, async (req, res, next) => {
     const { id } = req.params
     // console.log(id, 'find')
     // if (!validateRole(req.user.role)) {
@@ -397,7 +397,7 @@ router.patch('/approve/:id', check_auth, async (req, res, next) => {
     }
 })
 
-router.patch('/reject/:id', check_auth, async (req, res, next) => {
+router.patch('/:id/reject', check_auth, async (req, res, next) => {
     const { id } = req.params
     // console.log(id, 'find')
     // if (!validateRole(req.user.role)) {
