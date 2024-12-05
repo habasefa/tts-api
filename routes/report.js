@@ -415,6 +415,7 @@ router.patch('/reject/:id', check_auth, async (req, res, next) => {
             },
             data: {
                 status: Status.REJECTED,
+                comment: req.body.comment,
             },
             include: {
                 // tutor: true,
