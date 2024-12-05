@@ -4,6 +4,7 @@ const { PrismaClient, Status } = require('@prisma/client')
 
 const check_auth = require('../middlewares/check_auth')
 const { createCalander } = require('../Utils/calenderCreator')
+const { createViewToken, decodeToken } = require('../Utils/generateToken')
 
 const prisma = new PrismaClient()
 
@@ -385,11 +386,16 @@ router.patch('/:id/approve', check_auth, async (req, res, next) => {
         // })
 
         // console.log(updatedParent.reports, 'reports')
+        const token = createViewToken(
+            { reportId: updatedReport.id, parentId: updatedReport.parentId },
+            process.env.ACCESS_TOKEN_SECRET
+        )
+        const reportUrl = `${process.env.APP_URL}/report/view/${token}`
 
         res.json({
             success: true,
             message: `Approved report ${id}`,
-            updatedReport,
+            reportUrl,
         })
     } catch (error) {
         console.log(error)
@@ -431,6 +437,37 @@ router.patch('/:id/reject', check_auth, async (req, res, next) => {
             message: `Rejected report ${id}`,
             updatedReport,
         })
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
+router.get('/view/:token', async (req, res, next) => {
+    const token = req.params.token
+    console.log(token)
+    try {
+        const decoded = decodeToken(token, process.env.ACCESS_TOKEN_SECRET)
+        console.log(decoded)
+        const report = await prisma.report.findUnique({
+            where: {
+                id: decoded.reportId,
+            },
+            include: {
+                tutor: true,
+                parent: true,
+            },
+        })
+        console.log(report)
+        if (report) {
+            res.json({
+                success: true,
+                message: 'Report found',
+                report,
+            })
+        } else {
+            res.json({ success: false, message: `report not found` })
+        }
     } catch (error) {
         console.log(error)
         next(error)
