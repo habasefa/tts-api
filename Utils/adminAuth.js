@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const validator = require('validator')
-const log = require('../lib/chalkLog').default
+const log = require('../lib/chalkLog')
 
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
