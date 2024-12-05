@@ -151,7 +151,7 @@ router.get('/', check_auth, async (req, res, next) => {
     try {
         const users = await prisma.parent.findMany({
             where: {
-                status: 'SUCCESS',
+                status: Status.SUCCESS,
             },
             include: {
                 students: true,
@@ -179,6 +179,30 @@ router.get('/:id', check_auth, async (req, res, next) => {
         } else {
             res.json({ success: false, message: `parent not found` })
         }
+    } catch (error) {
+        next(error)
+    }
+})
+router.get('/:id/reports', check_auth, async (req, res, next) => {
+    try {
+        const { id } = req.params
+        const user = await prisma.parent.findUnique({
+            where: {
+                id: id,
+            },
+            include: {
+                reports: true,
+            },
+        })
+        const reports = user.reports.filter(
+            (report) => report.status === Status.SUCCESS
+        )
+
+        res.json({
+            success: true,
+            message: 'List of success reports',
+            reports: reports,
+        })
     } catch (error) {
         next(error)
     }

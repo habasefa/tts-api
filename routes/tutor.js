@@ -132,6 +132,79 @@ router.get('/:id', check_auth, async (req, res, next) => {
     }
 })
 
+router.get('/:id/reports/success', check_auth, async (req, res, next) => {
+    const { id } = req.params
+    try {
+        const user = await prisma.tutor.findUnique({
+            where: {
+                id: id,
+            },
+            include: {
+                reports: true,
+            },
+        })
+        const reports = user.reports.filter(
+            (report) => report.status === Status.SUCCESS
+        )
+
+        res.json({
+            success: true,
+            message: 'List of Approved Reports',
+            reports: reports,
+        })
+    } catch (error) {
+        next(error)
+    }
+})
+router.get('/:id/reports/pending', check_auth, async (req, res, next) => {
+    const { id } = req.params
+    try {
+        const user = await prisma.tutor.findUnique({
+            where: {
+                id: id,
+            },
+            include: {
+                reports: true,
+            },
+        })
+        const reports = user.reports.filter(
+            (report) => report.status === Status.PENDING
+        )
+
+        res.json({
+            success: true,
+            message: 'List of PENDING Reports',
+            reports: reports,
+        })
+    } catch (error) {
+        next(error)
+    }
+})
+router.get('/:id/reports/rejected', check_auth, async (req, res, next) => {
+    const { id } = req.params
+    try {
+        const user = await prisma.tutor.findUnique({
+            where: {
+                id: id,
+            },
+            include: {
+                reports: true,
+            },
+        })
+        const reports = user.reports.filter(
+            (report) => report.status === Status.REJECTED
+        )
+
+        res.json({
+            success: true,
+            message: 'List of rejected Reports',
+            reports: reports,
+        })
+    } catch (error) {
+        next(error)
+    }
+})
+
 router.patch('/:id', check_auth, async (req, res, next) => {
     const { id } = req.params
     console.log(id)
