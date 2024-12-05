@@ -74,7 +74,23 @@ router.post('/', check_auth, async (req, res, next) => {
                     ...req.body,
                 },
             })
-            console.log(report)
+            // console.log(req.body.tutorId, 'tutorId')
+            // const updatedTutor = await prisma.tutor.update({
+            //     where: {
+            //         id: report.tutorId,
+            //     },
+            //     data: {
+            //         reports: {
+            //             connect: {
+            //                 id: report.id,
+            //             },
+            //         },
+            //     },
+            //     include: {
+            //         reports: true,
+            //     },
+            // })
+
             res.status(201).json({
                 success: true,
                 message: 'report Registered.',
@@ -223,7 +239,8 @@ router.get('/', check_auth, async (req, res, next) => {
     try {
         const users = await prisma.report.findMany({
             include: {
-                // tutor: true,
+                tutor: true,
+                parent: true,
             },
         })
         res.json({ success: true, message: 'List of reports', users: users })
@@ -321,32 +338,51 @@ router.patch('/approve/:id', check_auth, async (req, res, next) => {
             },
             data: {
                 status: Status.SUCCESS,
+                ...req.body,
             },
             include: {
                 // tutor: true,
             },
         })
         console.log(updatedReport.parentId, 'parentId')
-        const { parentId, ...reportData } = updatedReport
+        // const { parentId, ...reportData } = updatedReport
 
-        const updatedParent = await prisma.parent.update({
-            where: {
-                id: updatedReport.parentId,
-            },
-            data: {
-                reports: {
-                    connectOrCreate: {
-                        where: { id: updatedReport.id },
-                        create: {
-                            ...reportData,
-                        },
-                    },
-                },
-            },
-            include: {
-                reports: true,
-            },
-        })
+        // const updatedParent = await prisma.parent.update({
+        //     where: {
+        //         id: updatedReport.parentId,
+        //     },
+        //     data: {
+        //         reports: {
+        //             connect: {
+        //                 id: updatedReport.id,
+        //             },
+        //             // connectOrCreate: {
+        //             //     where: { id: updatedReport.id },
+        //             //     create: {
+        //             //         ...reportData,
+        //             //     },
+        //             // },
+        //         },
+        //     },
+        //     include: {
+        //         reports: true,
+        //     },
+        // })
+        // const updatedTutor = await prisma.tutor.update({
+        //     where: {
+        //         id: updatedReport.tutorId,
+        //     },
+        //     data: {
+        //         reports: {
+        //             connect: {
+        //                 id: updatedReport.id,
+        //             },
+        //         },
+        //     },
+        //     include: {
+        //         reports: true,
+        //     },
+        // })
 
         // console.log(updatedParent.reports, 'reports')
 
@@ -360,6 +396,46 @@ router.patch('/approve/:id', check_auth, async (req, res, next) => {
         next(error)
     }
 })
+
+router.patch('/reject/:id', check_auth, async (req, res, next) => {
+    const { id } = req.params
+    // console.log(id, 'find')
+    // if (!validateRole(req.user.role)) {
+    //     console.log(`Unauthorized ${req.user.role}`)
+
+    //     return res.status(401).json({
+    //         success: false,
+    //         message: 'Unauthorized.',
+    //     })
+    // }
+    try {
+        const updatedReport = await prisma.report.update({
+            where: {
+                id: id,
+            },
+            data: {
+                status: Status.REJECTED,
+            },
+            include: {
+                // tutor: true,
+            },
+        })
+        console.log(updatedReport.parentId, 'parentId')
+        // const { parentId, ...reportData } = updatedReport
+
+        // console.log(updatedParent.reports, 'reports')
+
+        res.json({
+            success: true,
+            message: `Rejected report ${id}`,
+            updatedReport,
+        })
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
 const validateRole = (role) => {
     if (role === 'ADMIN' || role === 'SUPERDMIN') {
         return true
