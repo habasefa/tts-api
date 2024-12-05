@@ -324,14 +324,14 @@ router.delete('/:id', async (req, res, next) => {
 router.patch('/:id/approve', check_auth, async (req, res, next) => {
     const { id } = req.params
     // console.log(id, 'find')
-    // if (!validateRole(req.user.role)) {
-    //     console.log(`Unauthorized ${req.user.role}`)
+    if (!validateAdmin(req.user.role)) {
+        console.log(`Unauthorized ${req.user.role}`)
 
-    //     return res.status(401).json({
-    //         success: false,
-    //         message: 'Unauthorized.',
-    //     })
-    // }
+        return res.status(401).json({
+            success: false,
+            message: 'Unauthorized.',
+        })
+    }
     try {
         const updatedReport = await prisma.report.update({
             where: {
@@ -406,7 +406,7 @@ router.patch('/:id/approve', check_auth, async (req, res, next) => {
 router.patch('/:id/reject', check_auth, async (req, res, next) => {
     const { id } = req.params
     // console.log(id, 'find')
-    // if (!validateRole(req.user.role)) {
+    // if (!validateAdmin(req.user.role)) {
     //     console.log(`Unauthorized ${req.user.role}`)
 
     //     return res.status(401).json({
@@ -474,7 +474,7 @@ router.get('/view/:token', async (req, res, next) => {
     }
 })
 
-const validateRole = (role) => {
+const validateAdmin = (role) => {
     if (role === 'ADMIN' || role === 'SUPERDMIN') {
         return true
     }
