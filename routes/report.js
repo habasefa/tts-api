@@ -327,19 +327,28 @@ router.patch('/approve/:id', check_auth, async (req, res, next) => {
             },
         })
         console.log(updatedReport.parentId, 'parentId')
+        const { parentId, ...reportData } = updatedReport
+
         const updatedParent = await prisma.parent.update({
             where: {
                 id: updatedReport.parentId,
             },
             data: {
                 reports: {
-                    connect: {
-                        id: updatedReport.id,
+                    connectOrCreate: {
+                        where: { id: updatedReport.id },
+                        create: {
+                            ...reportData,
+                        },
                     },
                 },
             },
+            include: {
+                reports: true,
+            },
         })
-        console.log(updatedParent.reports, 'parent')
+
+        // console.log(updatedParent.reports, 'reports')
 
         res.json({
             success: true,
