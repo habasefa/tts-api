@@ -154,7 +154,7 @@ router.get('/sort/:year/:month', check_auth, async (req, res, next) => {
                 reportYear: Number(year),
             },
             include: {
-                tutor: true,
+                // tutor: true,
             },
         })
         console.log(reports)
@@ -261,7 +261,7 @@ router.get('/:id', check_auth, async (req, res, next) => {
                 id: id,
             },
             include: {
-                tutor: true,
+                // tutor: true,
             },
         })
         console.log(user)
@@ -278,13 +278,24 @@ router.get('/:id', check_auth, async (req, res, next) => {
 
 router.patch('/:id', async (req, res, next) => {
     const { id } = req.params
-    console.log(id, 'hi')
     try {
+        let viewUrl = ''
+        console.log()
+        if (req.body.status === Status.SUCCESS) {
+            const token = createViewToken(
+                {
+                    reportId: id,
+                },
+                process.env.ACCESS_TOKEN_SECRET
+            )
+            viewUrl = `${process.env.APP_URL}/report/view/${token}`
+        }
+        console.log(id, 'hi')
         const updatedUser = await prisma.report.update({
             where: {
                 id: id,
             },
-            data: req.body,
+            data: { ...req.body, viewUrl: viewUrl },
             include: {
                 tutor: true,
             },
@@ -333,6 +344,11 @@ router.patch('/:id/approve', check_auth, async (req, res, next) => {
         })
     }
     try {
+        const token = createViewToken(
+            { reportId: updatedReport.id, parentId: updatedReport.parentId },
+            process.env.ACCESS_TOKEN_SECRET
+        )
+        const viewUrl = `${process.env.APP_URL}/report/view/${token}`
         const updatedReport = await prisma.report.update({
             where: {
                 id: id,
@@ -340,62 +356,20 @@ router.patch('/:id/approve', check_auth, async (req, res, next) => {
             data: {
                 status: Status.SUCCESS,
                 ...req.body,
+                viewUrl: viewUrl,
             },
             include: {
                 // tutor: true,
             },
         })
         console.log(updatedReport.parentId, 'parentId')
-        // const { parentId, ...reportData } = updatedReport
-
-        // const updatedParent = await prisma.parent.update({
-        //     where: {
-        //         id: updatedReport.parentId,
-        //     },
-        //     data: {
-        //         reports: {
-        //             connect: {
-        //                 id: updatedReport.id,
-        //             },
-        //             // connectOrCreate: {
-        //             //     where: { id: updatedReport.id },
-        //             //     create: {
-        //             //         ...reportData,
-        //             //     },
-        //             // },
-        //         },
-        //     },
-        //     include: {
-        //         reports: true,
-        //     },
-        // })
-        // const updatedTutor = await prisma.tutor.update({
-        //     where: {
-        //         id: updatedReport.tutorId,
-        //     },
-        //     data: {
-        //         reports: {
-        //             connect: {
-        //                 id: updatedReport.id,
-        //             },
-        //         },
-        //     },
-        //     include: {
-        //         reports: true,
-        //     },
-        // })
 
         // console.log(updatedParent.reports, 'reports')
-        const token = createViewToken(
-            { reportId: updatedReport.id, parentId: updatedReport.parentId },
-            process.env.ACCESS_TOKEN_SECRET
-        )
-        const reportUrl = `${process.env.APP_URL}/report/view/${token}`
 
         res.json({
             success: true,
             message: `Approved report ${id}`,
-            reportUrl,
+            viewUrl,
         })
     } catch (error) {
         console.log(error)
@@ -442,11 +416,49 @@ router.patch('/:id/reject', check_auth, async (req, res, next) => {
         next(error)
     }
 })
+router.patch('/:id/pending', check_auth, async (req, res, next) => {
+    const { id } = req.params
+    // console.log(id, 'find')
+    // if (!validateAdmin(req.user.role)) {
+    //     console.log(`Unauthorized ${req.user.role}`)
 
+    //     return res.status(401).json({
+    //         success: false,
+    //         message: 'Unauthorized.',
+    //     })
+    // }
+    try {
+        const updatedReport = await prisma.report.update({
+            where: {
+                id: id,
+            },
+            data: {
+                status: Status.PENDING,
+                comment: req.body.comment,
+            },
+            include: {
+                // tutor: true,
+            },
+        })
+        console.log(updatedReport.parentId, 'parentId')
+        // const { parentId, ...reportData } = updatedReport
+
+        // console.log(updatedParent.reports, 'reports')
+
+        res.json({
+            success: true,
+            message: `Pending report ${id}`,
+            updatedReport,
+        })
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
 router.get('/view/:token', async (req, res, next) => {
     const token = req.params.token
-    console.log(token)
     try {
+        console.log('token', token)
         const decoded = decodeToken(token, process.env.ACCESS_TOKEN_SECRET)
         console.log(decoded)
         const report = await prisma.report.findUnique({
@@ -458,7 +470,7 @@ router.get('/view/:token', async (req, res, next) => {
                 parent: true,
             },
         })
-        console.log(report)
+        // console.log(report)
         if (report) {
             res.json({
                 success: true,

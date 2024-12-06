@@ -112,6 +112,7 @@ model Report {
   status      Status   @default(PENDING)
   view      View @default(PENDING)
   comment         String?
+  viewUrl        String?
 }
 // model Report {
 //   id              Int      @id @default(autoincrement())

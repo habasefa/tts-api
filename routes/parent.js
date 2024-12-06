@@ -13,7 +13,6 @@ router.post('/', async (req, res, next) => {
         const parent = await prisma.parent.create({
             data: {
                 ...req.body,
-                reports: [],
             },
         })
 
