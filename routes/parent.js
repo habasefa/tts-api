@@ -154,6 +154,7 @@ router.get('/', check_auth, async (req, res, next) => {
             },
             include: {
                 students: true,
+                reports: true,
             },
         })
         res.json({ success: true, message: 'List of Parents', users: users })
