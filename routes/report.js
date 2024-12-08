@@ -154,7 +154,7 @@ router.get('/sort/:year/:month', check_auth, async (req, res, next) => {
                 reportYear: Number(year),
             },
             include: {
-                // tutor: true,
+                tutor: true,
             },
         })
         console.log(reports)
