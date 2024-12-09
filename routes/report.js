@@ -5,6 +5,7 @@ const { PrismaClient, Status } = require('@prisma/client')
 const check_auth = require('../middlewares/check_auth')
 const { createCalander } = require('../Utils/calenderCreator')
 const { createViewToken, decodeToken } = require('../Utils/generateToken')
+const { APP_URL } = require('../Utils/url')
 
 const prisma = new PrismaClient()
 
@@ -288,7 +289,7 @@ router.patch('/:id', async (req, res, next) => {
                 },
                 process.env.ACCESS_TOKEN_SECRET
             )
-            viewUrl = `${process.env.APP_URL}/report/view/${token}`
+            viewUrl = `${APP_URL}/report/view/${token}`
         }
         console.log(id, 'hi')
         const updatedUser = await prisma.report.update({
@@ -348,7 +349,7 @@ router.patch('/:id/approve', check_auth, async (req, res, next) => {
             { reportId: updatedReport.id, parentId: updatedReport.parentId },
             process.env.ACCESS_TOKEN_SECRET
         )
-        const viewUrl = `${process.env.APP_URL}/report/view/${token}`
+        const viewUrl = `${APP_URL}/report/view/${token}`
         const updatedReport = await prisma.report.update({
             where: {
                 id: id,
