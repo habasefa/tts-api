@@ -157,6 +157,7 @@ model Parent {
   timeSheets      Image[]
   followup        ParentFollowup[]
   reports         Report[]
+  telegramId      String?
   
 }
 

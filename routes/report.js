@@ -6,6 +6,7 @@ const check_auth = require('../middlewares/check_auth')
 const { createCalander } = require('../Utils/calenderCreator')
 const { createViewToken, decodeToken } = require('../Utils/generateToken')
 const { APP_URL } = require('../Utils/url')
+const { sendTelegramNotification } = require('../Utils/report')
 
 const prisma = new PrismaClient()
 
@@ -335,42 +336,37 @@ router.delete('/:id', async (req, res, next) => {
 
 router.patch('/:id/approve', check_auth, async (req, res, next) => {
     const { id } = req.params
-    // console.log(id, 'find')
-    if (!validateAdmin(req.user.role)) {
-        console.log(`Unauthorized ${req.user.role}`)
-
-        return res.status(401).json({
-            success: false,
-            message: 'Unauthorized.',
-        })
-    }
     try {
+        let viewUrl = ''
+        console.log()
         const token = createViewToken(
-            { reportId: updatedReport.id, parentId: updatedReport.parentId },
+            {
+                reportId: id,
+            },
             process.env.ACCESS_TOKEN_SECRET
         )
-        const viewUrl = `${APP_URL}/report/view/${token}`
-        const updatedReport = await prisma.report.update({
+        viewUrl = `${APP_URL}/report/view/${token}`
+        console.log(id, 'hi')
+        const updatedUser = await prisma.report.update({
             where: {
                 id: id,
             },
-            data: {
-                status: Status.SUCCESS,
-                ...req.body,
-                viewUrl: viewUrl,
-            },
+            data: { ...req.body, viewUrl: viewUrl },
             include: {
-                // tutor: true,
+                tutor: true,
             },
         })
-        console.log(updatedReport.parentId, 'parentId')
-
-        // console.log(updatedParent.reports, 'reports')
-
+        const parent = await prisma.parent.findUnique({
+            where: {
+                id: updatedUser.parentId,
+            },
+        })
+        sendTelegramNotification(parent.telegramId, viewUrl)
+        console.log(updatedUser, 'report')
         res.json({
             success: true,
-            message: `Approved report ${id}`,
-            viewUrl,
+            message: `Updated report ${id}`,
+            updatedUser,
         })
     } catch (error) {
         console.log(error)
