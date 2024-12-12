@@ -25,5 +25,21 @@ async function sendTelegramNotification(parentTelegramId, message) {
         console.error('Error sending notification:', error)
     }
 }
+function generateTelegramMessage(viewUrl) {
+    return `
+👨‍🏫 *Dear Parent,*  
+Your child's latest progress report from their tutor is now available. 📖✨  
 
-module.exports = { sendTelegramNotification }
+Click the link below to view the report:  
+[View Report](${viewUrl})  
+
+We encourage you to review the report to see how your child is doing and identify areas for growth.  
+
+Thank you for your continued support in your child’s educational journey!  
+
+Best regards,  
+The Tutoring Team  
+`
+}
+
+module.exports = { sendTelegramNotification, generateTelegramMessage }

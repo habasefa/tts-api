@@ -6,7 +6,10 @@ const check_auth = require('../middlewares/check_auth')
 const { createCalander } = require('../Utils/calenderCreator')
 const { createViewToken, decodeToken } = require('../Utils/generateToken')
 const { APP_URL } = require('../Utils/url')
-const { sendTelegramNotification } = require('../Utils/report')
+const {
+    sendTelegramNotification,
+    generateTelegramMessage,
+} = require('../Utils/report')
 
 const prisma = new PrismaClient()
 
@@ -300,12 +303,31 @@ router.patch('/:id', async (req, res, next) => {
             data: { ...req.body, viewUrl: viewUrl },
             include: {
                 tutor: true,
+                parent: true,
             },
         })
+        let telegramNotified = false
+        if (req.body.status === Status.SUCCESS) {
+            try {
+                const parent = await prisma.parent.findUnique({
+                    where: {
+                        id: updatedUser.parentId,
+                    },
+                })
+                sendTelegramNotification(
+                    parent.telegramId,
+                    generateTelegramMessage(viewUrl)
+                )
+                telegramNotified = true
+            } catch {
+                telegramNotified = false
+            }
+        }
         console.log(updatedUser, 'report')
         res.json({
             success: true,
             message: `Updated report ${id}`,
+            telegramNotified,
             updatedUser,
         })
     } catch (error) {
@@ -361,7 +383,10 @@ router.patch('/:id/approve', check_auth, async (req, res, next) => {
                 id: updatedUser.parentId,
             },
         })
-        sendTelegramNotification(parent.telegramId, viewUrl)
+        sendTelegramNotification(
+            parent.telegramId,
+            generateTelegramMessage(viewUrl)
+        )
         console.log(updatedUser, 'report')
         res.json({
             success: true,
@@ -491,4 +516,5 @@ const validateAdmin = (role) => {
         return false
     }
 }
+
 module.exports = router
