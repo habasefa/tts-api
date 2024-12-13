@@ -65,7 +65,7 @@ model Tutor {
   user                User?     @relation(fields: [userId], references: [id])
   userId              String?      @unique@db.ObjectId
   followup            TutorFollowup[]
-  telegramId      String?
+  telegramId      Int?
 }
 
 model Job {
@@ -159,7 +159,7 @@ model Parent {
   followup        ParentFollowup[]
   reports         Report[]
   telegramUsername    String?
-  telegramId      String?
+  telegramId      Int?
   
 }
 
