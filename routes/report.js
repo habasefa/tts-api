@@ -5,7 +5,7 @@ const { PrismaClient, Status } = require('@prisma/client')
 const check_auth = require('../middlewares/check_auth')
 const { createCalander } = require('../Utils/calenderCreator')
 const { createViewToken, decodeToken } = require('../Utils/generateToken')
-const { APP_URL } = require('../Utils/url')
+const { TTS_URL } = require('../Utils/url')
 const {
     sendTelegramNotification,
     generateTelegramMessage,
@@ -293,7 +293,7 @@ router.patch('/:id', async (req, res, next) => {
                 },
                 process.env.ACCESS_TOKEN_SECRET
             )
-            viewUrl = `${APP_URL}/report/view/${token}`
+            viewUrl = `${TTS_URL}/report/view/${token}`
         }
         console.log(id, 'hi')
         const updatedUser = await prisma.report.update({
@@ -367,7 +367,7 @@ router.patch('/:id/approve', check_auth, async (req, res, next) => {
             },
             process.env.ACCESS_TOKEN_SECRET
         )
-        viewUrl = `${APP_URL}/report/view/${token}`
+        viewUrl = `${TTS_URL}/report/view/${token}`
         console.log(id, 'hi')
         const updatedUser = await prisma.report.update({
             where: {

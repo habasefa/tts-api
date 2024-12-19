@@ -1,6 +1,6 @@
-// const APP_URL = 'localhost/3000'
-// const APP_URL =
+// const TTS_URL = 'localhost/3000'
+// const TTS_URL =
 //     'https://tts-nextjs-xdtk-git-staging-habtamuasefas-projects.vercel.app/'
-const APP_URL = 'https://tutor.temari-bet.com/'
+const TTS_URL = 'https://tutor.temari-bet.com/'
 
-module.exports = { APP_URL }
+module.exports = { TTS_URL }
