@@ -309,21 +309,36 @@ router.patch('/:id', async (req, res, next) => {
         let telegramNotified = false
         if (req.body.status === Status.SUCCESS) {
             try {
+                let children = []
+                try {
+                    updatedUser.reports.inputFields.forEach((child) => {
+                        children.push(child.name)
+                    })
+                } catch {}
+
                 const parent = await prisma.parent.findUnique({
                     where: {
                         id: updatedUser.parentId,
                     },
                 })
+                console.log(children)
+                children = ['eba', 'adisu', 'kenea']
                 sendTelegramNotification(
                     parent.telegramId,
-                    generateTelegramMessage(viewUrl)
+                    generateTelegramMessage(
+                        viewUrl,
+                        children,
+                        parent.fullName,
+                        `${updatedUser.reportDate}, ${updatedUser.reportMonth}, ${updatedUser.reportYear}`,
+                        updatedUser.tutorName
+                    )
                 )
                 telegramNotified = true
             } catch {
                 telegramNotified = false
             }
         }
-        console.log(updatedUser, 'report')
+        console.log('report updated')
         res.json({
             success: true,
             message: `Updated report ${id}`,

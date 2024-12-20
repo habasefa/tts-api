@@ -25,17 +25,41 @@ async function sendTelegramNotification(parentTelegramId, message) {
         console.error('Error sending notification:', error)
     }
 }
-function generateTelegramMessage(viewUrl) {
-    return `
-👨‍🏫 *Dear Parent,*  
-Your child's latest progress report from their tutor is now available. 📖✨  
+function generateTelegramMessage(
+    viewUrl,
+    children,
+    parentName,
+    dateRange,
+    tutorName
+) {
+    let childrenText
 
-Click the link below to view the report:  
+    if (!children || children.length === 0) {
+        childrenText = "child's"
+    } else if (children.length === 1) {
+        childrenText = `${children[0]}'s`
+    } else if (children.length === 2) {
+        childrenText = `${children[0]} and ${children[1]}’s`
+    } else {
+        const lastChild = children.pop() // Get the last child
+        childrenText = `${children.join(', ')}, and ${lastChild}’s`
+    }
+
+    return `
+👨‍🏫 *Dear ${parentName},*  
+
+${childrenText} progress report for the ${dateRange} GC, prepared by Tutor ${tutorName}, is now available. 📖✨  
+
+Please click the link below to review the report:  
 [View Report](${viewUrl})  
 
-We encourage you to review the report to see how your child is doing and identify areas for growth.  
+We encourage you to look over this information to see how your ${
+        children.length > 1 ? 'children are' : 'child is'
+    }  doing.  
 
-Thank you for your continued support in your child’s educational journey!  
+Thank you for investing in your ${
+        children.length > 1 ? 'children’s' : 'child’s'
+    } future through our tutoring services.  
 
 Best regards,  
 The Tutoring Team  
