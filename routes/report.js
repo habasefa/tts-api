@@ -293,7 +293,7 @@ router.patch('/:id', async (req, res, next) => {
                 },
                 process.env.ACCESS_TOKEN_SECRET
             )
-            viewUrl = `${TTS_URL}/report/view/${token}`
+            viewUrl = `${TTS_URL}/view/report/${token}`
         }
         console.log(id, 'hi')
         const updatedUser = await prisma.report.update({
