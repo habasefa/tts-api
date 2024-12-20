@@ -322,7 +322,6 @@ router.patch('/:id', async (req, res, next) => {
                     },
                 })
                 console.log(children)
-                children = ['eba', 'adisu', 'kenea']
                 sendTelegramNotification(
                     parent.telegramId,
                     generateTelegramMessage(
