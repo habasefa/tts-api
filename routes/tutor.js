@@ -107,6 +107,35 @@ router.get('/location/:location', check_auth, async (req, res, next) => {
     }
 })
 
+router.get('/fetchTimeSheet', check_auth, async (req, res, next) => {
+    try {
+        console.log('fetch time sheet')
+        const timeSheets = await prisma.image.findMany({
+            include: {
+                // tutorId: true,
+            },
+        })
+        res.json({ success: true, message: 'Fetched timesheets', timeSheets })
+    } catch (err) {
+        console.log(err)
+        next(err)
+    }
+})
+router.get('/fetchTimeSheet/:year', check_auth, async (req, res, next) => {
+    const { year } = req.params
+
+    try {
+        const timeSheets = await prisma.image.findMany({
+            where: {
+                year: +year,
+            },
+        })
+        res.json({ success: true, message: 'List of timeSheets', timeSheets })
+    } catch (err) {
+        console.log(err)
+        next(err)
+    }
+})
 router.get('/:id', check_auth, async (req, res, next) => {
     const { id } = req.params
     console.log(id)
@@ -273,34 +302,6 @@ router.delete(
     }
 )
 
-router.get('/fetchTimeSheet', check_auth, async (req, res, next) => {
-    try {
-        const timeSheets = await prisma.image.findMany({
-            where: {
-                tutorId: true,
-            },
-        })
-        res.json({ success: true, message: 'Fetched timesheets', timeSheets })
-    } catch (err) {
-        console.log(err)
-        next(err)
-    }
-})
-router.get('/fetchTimeSheet/:id', check_auth, async (req, res, next) => {
-    const { id } = req.params
-
-    try {
-        const timeSheets = await prisma.image.findMany({
-            where: {
-                id: id,
-            },
-        })
-        res.json({ success: true, message: 'List of timeSheets', timeSheets })
-    } catch (err) {
-        console.log(err)
-        next(err)
-    }
-})
 router.post('/followUp', check_auth, async (req, res, next) => {
     try {
         const tutorFollowUp = await prisma.tutorFollowup.create({
