@@ -23,6 +23,7 @@ const studentRoutes = require('./routes/student')
 const reportRoutes = require('./routes/report')
 const jobRoutes = require('./routes/job')
 const adminRoutes = require('./routes/admin')
+const botRoutes = require('./routes/bot')
 const renewAccessTokenRoute = require('./routes/renewAccessToken')
 
 // prisma instance
@@ -37,6 +38,7 @@ app.use('/api/v1/student', studentRoutes)
 app.use('/api/v1/report', reportRoutes)
 app.use('/api/v1/job', jobRoutes)
 app.use('/api/v1/admin', adminRoutes)
+app.use('/api/v1/bot', botRoutes)
 app.use('/api/v1/refreshTokens', renewAccessTokenRoute)
 
 // catching error

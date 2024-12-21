@@ -18,7 +18,7 @@ model User {
   password String
   role     Role    @default(TUTOR)
   tutor    Tutor?
-  parent   Parent?
+  // parent   Parent?
 }
 
 model Tutor {
@@ -153,8 +153,8 @@ model Parent {
   students       Student[]
   role           Role      @default(PARENT)
   status         Status    @default(PENDING)
-  user           User?     @relation(fields: [userId], references: [id])
-  userId         String?     @unique()  @db.ObjectId
+  // user           User?     @relation(fields: [userId], references: [id])
+  // userId         String?     @unique()  @db.ObjectId
   timeSheets      Image[]
   followup        ParentFollowup[]
   reports         Report[]
