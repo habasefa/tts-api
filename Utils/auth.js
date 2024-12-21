@@ -124,7 +124,7 @@ const userLogin = async (req, res, next) => {
 
             include: {
                 tutor: true,
-                parent: true,
+                // parent: true,
             },
         })
         console.log(user)
@@ -167,7 +167,7 @@ const userLogin = async (req, res, next) => {
                 email: user.email,
                 role: user.role,
                 tutor: user.tutor,
-                parent: user.parent,
+                // parent: user.parent,
             },
         })
     } catch (error) {
@@ -195,7 +195,7 @@ const adminLogin = async (req, res, next) => {
             },
             include: {
                 tutor: true,
-                parent: true,
+                // parent: true,
             },
         })
         console.log(user)
@@ -247,7 +247,7 @@ const adminLogin = async (req, res, next) => {
                 email: user.email,
                 role: user.role,
                 tutor: user.tutor,
-                parent: user.parent,
+                // parent: user.parent,
             },
         })
     } catch (error) {

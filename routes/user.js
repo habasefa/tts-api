@@ -66,7 +66,7 @@ router.get('/:id', check_auth, async (req, res, next) => {
             },
             include: {
                 tutor: true,
-                parent: true,
+                // parent: true,
             },
         })
         if (user) {
@@ -88,7 +88,7 @@ router.patch('/forgotPassword', async (req, res, next) => {
         },
         include: {
             tutor: true,
-            parent: true,
+            // parent: true,
         },
     })
     console.log(user)
@@ -111,7 +111,7 @@ router.patch('/forgotPassword', async (req, res, next) => {
             },
             include: {
                 tutor: true,
-                parent: true,
+                // parent: true,
             },
             data: {
                 ...req.body,
@@ -160,7 +160,7 @@ router.patch('/:id', check_auth, async (req, res, next) => {
             },
             include: {
                 tutor: true,
-                parent: true,
+                // parent: true,
             },
         })
         // compare hashed password
@@ -177,7 +177,7 @@ router.patch('/:id', check_auth, async (req, res, next) => {
             },
             include: {
                 tutor: true,
-                parent: true,
+                // parent: true,
             },
             data: {
                 password: hashedPassword,
