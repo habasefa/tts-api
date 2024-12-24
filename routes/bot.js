@@ -6,6 +6,42 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 // Find a parent by their Telegram username
+router.get('/parent/phone-number/:phoneNumber', async (req, res, next) => {
+    const { phoneNumber } = req.params
+    console.log('GET /parent/phone-number/:phoneNumber', phoneNumber)
+    if (!phoneNumber) {
+        return res.status(404).json({
+            success: false,
+            message: 'Parent not found',
+        })
+    }
+    try {
+        const parent = await prisma.parent.findFirst({
+            where: {
+                phone1: `${phoneNumber}`,
+            },
+            include: {
+                students: true,
+            },
+        })
+        if (parent) {
+            res.json({
+                success: true,
+                message: `parent ${phoneNumber}`,
+                user: parent,
+            })
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'Parent not found',
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
+
 router.get('/parent/:username', async (req, res, next) => {
     const { username } = req.params
     try {
@@ -60,6 +96,41 @@ router.patch('/parent/:id/telegram-id', async (req, res, next) => {
 })
 
 // Find a tutor by their Telegram username
+router.get('/tutor/phone-number/:phoneNumber', async (req, res, next) => {
+    const { phoneNumber } = req.params
+    console.log('GET /tutor/phone-number/:phoneNumber', phoneNumber)
+    if (!phoneNumber) {
+        return res.status(404).json({
+            success: false,
+            message: 'tutor not found',
+        })
+    }
+    try {
+        const tutor = await prisma.tutor.findFirst({
+            where: {
+                phone: `${phoneNumber}`,
+            },
+            include: {
+                students: true,
+            },
+        })
+        if (tutor) {
+            res.json({
+                success: true,
+                message: `parent ${phoneNumber}`,
+                user: tutor,
+            })
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'tutor not found',
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+})
 router.get('/tutor/:username', async (req, res, next) => {
     const { username } = req.params
     try {
