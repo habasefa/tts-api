@@ -1,183 +1,31 @@
 require('dotenv').config()
 const express = require('express')
 const router = express.Router()
-const { PrismaClient } = require('@prisma/client')
+const parentController = require('../controllers/parent')
+const tutorController = require('../controllers/tutor')
+const jobController = require('../controllers/job')
 
-const prisma = new PrismaClient()
+// Parent routes
+router.get(
+    '/parent/phone-number/:phoneNumber',
+    parentController.getParentByPhoneNumber
+)
+router.get('/parent/:username', parentController.getParentByUsername)
+router.patch('/parent/:id/telegram-id', parentController.updateParentTelegramId)
 
-// Find a parent by their Telegram username
-router.get('/parent/phone-number/:phoneNumber', async (req, res, next) => {
-    const { phoneNumber } = req.params
-    console.log('GET /parent/phone-number/:phoneNumber', phoneNumber)
-    if (!phoneNumber) {
-        return res.status(404).json({
-            success: false,
-            message: 'Parent not found',
-        })
-    }
-    try {
-        const parent = await prisma.parent.findFirst({
-            where: {
-                phone1: `${phoneNumber}`,
-            },
-            include: {
-                students: true,
-            },
-        })
-        if (parent) {
-            res.json({
-                success: true,
-                message: `parent ${phoneNumber}`,
-                user: parent,
-            })
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'Parent not found',
-            })
-        }
-    } catch (error) {
-        console.log(error)
-        next(error)
-    }
-})
+// Tutor routes
+router.get(
+    '/tutor/phone-number/:phoneNumber',
+    tutorController.getTutorByPhoneNumber
+)
+router.get('/tutor/:username', tutorController.getTutorByUsername)
+router.patch('/tutor/:id/telegram-id', tutorController.updateTutorTelegramId)
 
-router.get('/parent/:username', async (req, res, next) => {
-    const { username } = req.params
-    try {
-        const parent = await prisma.parent.findFirst({
-            where: {
-                telegramUsername: `@${username}`,
-            },
-            include: {
-                students: true,
-            },
-        })
-        if (parent) {
-            res.json({
-                success: true,
-                message: `parent ${username}`,
-                user: parent,
-            })
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'Parent not found',
-            })
-        }
-    } catch (error) {
-        console.log(error)
-        next(error)
-    }
-})
-
-// Update parent's Telegram ID
-router.patch('/parent/:id/telegram-id', async (req, res, next) => {
-    const { id } = req.params
-    const { telegramId } = req.body
-
-    try {
-        const updatedParent = await prisma.parent.update({
-            where: {
-                id,
-            },
-            data: {
-                telegramId,
-            },
-        })
-        res.status(200).json({
-            success: true,
-            message: 'Parent Telegram ID updated',
-            user: updatedParent,
-        })
-    } catch (error) {
-        next(error)
-    }
-})
-
-// Find a tutor by their Telegram username
-router.get('/tutor/phone-number/:phoneNumber', async (req, res, next) => {
-    const { phoneNumber } = req.params
-    console.log('GET /tutor/phone-number/:phoneNumber', phoneNumber)
-    if (!phoneNumber) {
-        return res.status(404).json({
-            success: false,
-            message: 'tutor not found',
-        })
-    }
-    try {
-        const tutor = await prisma.tutor.findFirst({
-            where: {
-                phone: `${phoneNumber}`,
-            },
-            include: {
-                students: true,
-            },
-        })
-        if (tutor) {
-            res.json({
-                success: true,
-                message: `parent ${phoneNumber}`,
-                user: tutor,
-            })
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'tutor not found',
-            })
-        }
-    } catch (error) {
-        console.log(error)
-        next(error)
-    }
-})
-router.get('/tutor/:username', async (req, res, next) => {
-    const { username } = req.params
-    try {
-        const tutor = await prisma.tutor.findFirst({
-            where: {
-                telegramUsername: `@${username}`,
-            },
-        })
-        if (tutor) {
-            res.json({
-                success: true,
-                message: `tutor ${username}`,
-                user: tutor,
-            })
-        } else {
-            res.status(404).json({
-                success: false,
-                message: 'Tutor not found',
-            })
-        }
-    } catch (error) {
-        next(error)
-    }
-})
-
-// Update tutor's Telegram ID
-router.patch('/tutor/:id/telegram-id', async (req, res, next) => {
-    const { id } = req.params
-    const { telegramId } = req.body
-
-    try {
-        const updatedTutor = await prisma.tutor.update({
-            where: {
-                id,
-            },
-            data: {
-                telegramId,
-            },
-        })
-        res.status(200).json({
-            success: true,
-            message: 'Tutor Telegram ID updated',
-            user: updatedTutor,
-        })
-    } catch (error) {
-        next(error)
-    }
-})
+// Job routes
+router.post('/job', jobController.createJob)
+router.get('/job', jobController.getJobs)
+router.get('/job/:id', jobController.getJobById)
+router.put('/job/:id', jobController.updateJob)
+router.patch('/job/:id/add-tutor', jobController.updateJob)
 
 module.exports = router
