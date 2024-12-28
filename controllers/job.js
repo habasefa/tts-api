@@ -28,7 +28,8 @@ exports.getJobs = async (req, res, next) => {
                 tutors: true,
             },
         })
-        res.json({ success: true, message: 'List of jobs', users: users })
+        // console.log(users)
+        res.json({ success: true, message: 'List of jobs', jobs: users })
     } catch (error) {
         next(error)
     }
@@ -114,6 +115,7 @@ exports.applyJob = async (req, res, next) => {
 
 exports.deleteJob = async (req, res, next) => {
     const { id } = req.params
+    console.log('deleteJob: ', id)
     try {
         const deletedUser = await prisma.job.delete({
             where: {

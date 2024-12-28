@@ -26,6 +26,7 @@ router.post('/job', jobController.createJob)
 router.get('/job', jobController.getJobs)
 router.get('/job/:id', jobController.getJobById)
 router.put('/job/:id', jobController.updateJob)
+router.delete('/job/:id', jobController.deleteJob)
 router.post('/job/:id/apply', jobController.applyJob)
 
 module.exports = router
