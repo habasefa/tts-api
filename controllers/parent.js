@@ -87,12 +87,12 @@ exports.updateParentTelegramId = async (req, res, next) => {
 
 exports.getParentByTelegramId = async (req, res, next) => {
     const { telegramId } = req.params
+    console.log(telegramId)
     try {
         const parent = await prisma.parent.findFirst({
-            where: { telegramId: telegramId },
+            where: { telegramId: +telegramId },
             include: { students: true },
         })
-
         if (parent) {
             res.json({
                 success: true,

@@ -85,11 +85,14 @@ exports.updateTutorTelegramId = async (req, res, next) => {
 
 exports.getTutorByTelegramId = async (req, res, next) => {
     const { telegramId } = req.params
+    console.log(telegramId)
+
     try {
         const tutor = await prisma.tutor.findFirst({
-            where: { telegramId },
+            where: { telegramId: +telegramId },
         })
 
+        console.log(tutor)
         if (tutor) {
             res.json({
                 success: true,
