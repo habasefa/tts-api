@@ -82,3 +82,28 @@ exports.updateTutorTelegramId = async (req, res, next) => {
         next(error)
     }
 }
+
+exports.getTutorByTelegramId = async (req, res, next) => {
+    const { telegramId } = req.params
+    try {
+        const tutor = await prisma.tutor.findFirst({
+            where: { telegramId },
+        })
+
+        if (tutor) {
+            res.json({
+                success: true,
+                message: `Tutor ${telegramId}`,
+                user: tutor,
+            })
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'Tutor not found',
+            })
+        }
+    } catch (error) {
+        console.error(error)
+        next(error)
+    }
+}

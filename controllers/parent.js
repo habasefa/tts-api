@@ -84,3 +84,29 @@ exports.updateParentTelegramId = async (req, res, next) => {
         next(error)
     }
 }
+
+exports.getParentByTelegramId = async (req, res, next) => {
+    const { telegramId } = req.params
+    try {
+        const parent = await prisma.parent.findFirst({
+            where: { telegramId: telegramId },
+            include: { students: true },
+        })
+
+        if (parent) {
+            res.json({
+                success: true,
+                message: `Parent ${telegramId}`,
+                user: parent,
+            })
+        } else {
+            res.status(404).json({
+                success: false,
+                message: 'Parent not found',
+            })
+        }
+    } catch (error) {
+        console.error(error)
+        next(error)
+    }
+}

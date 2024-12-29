@@ -47,7 +47,7 @@ exports.getJobById = async (req, res, next) => {
             },
         })
         if (user) {
-            res.json({ success: true, message: `job ${id}`, user: user })
+            res.json({ success: true, message: `job ${id}`, job: user })
         } else {
             res.json({ success: false, message: `job not found` })
         }

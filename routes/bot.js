@@ -10,7 +10,11 @@ router.get(
     '/parent/phone-number/:phoneNumber',
     parentController.getParentByPhoneNumber
 )
-router.get('/parent/:username', parentController.getParentByUsername)
+router.get('/parent/username/:username', parentController.getParentByUsername)
+router.get(
+    '/parent/telegram-id/:telegramId',
+    parentController.getParentByTelegramId
+)
 router.patch('/parent/:id/telegram-id', parentController.updateParentTelegramId)
 
 // Tutor routes
@@ -18,7 +22,11 @@ router.get(
     '/tutor/phone-number/:phoneNumber',
     tutorController.getTutorByPhoneNumber
 )
-router.get('/tutor/:username', tutorController.getTutorByUsername)
+router.get('/tutor/username/:username', tutorController.getTutorByUsername)
+router.get(
+    'tutor/telegram-id/:telegramId',
+    tutorController.getTutorByTelegramId
+)
 router.patch('/tutor/:id/telegram-id', tutorController.updateTutorTelegramId)
 
 // Job routes
