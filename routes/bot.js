@@ -37,5 +37,6 @@ router.get('/job/:id', jobController.getJobById)
 router.put('/job/:id', jobController.updateJob)
 router.delete('/job/:id', jobController.deleteJob)
 router.post('/job/:id/apply', jobController.applyJob)
+router.post('/job/:id/close', jobController.closeJob)
 
 module.exports = router

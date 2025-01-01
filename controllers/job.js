@@ -49,7 +49,7 @@ exports.getJobById = async (req, res, next) => {
         if (user) {
             res.json({ success: true, message: `job ${id}`, job: user })
         } else {
-            res.json({ success: false, message: `job not found` })
+            res.status(404).json({ success: false, message: `job not found` })
         }
     } catch (error) {
         next(error)
@@ -78,6 +78,29 @@ exports.updateJob = async (req, res, next) => {
     }
 }
 
+exports.closeJob = async (req, res, next) => {
+    try {
+        const user = await prisma.job.update({
+            where: {
+                id: id,
+            },
+            data: {
+                status: 'SUCCESS',
+            },
+            include: {
+                tutors: true,
+            },
+        })
+        if (user) {
+            res.json({ success: true, message: `job ${id}`, job: user })
+        } else {
+            res.status(404).json({ success: false, message: `job not found` })
+        }
+    } catch (error) {
+        next(error)
+    }
+}
+
 exports.applyJob = async (req, res, next) => {
     const { id } = req.params
     const { telegramId } = req.body
@@ -88,9 +111,32 @@ exports.applyJob = async (req, res, next) => {
                 telegramId: telegramId,
             },
         })
+
         if (!tutor) {
-            return res.json({ success: false, message: 'Tutor not found' })
+            return res
+                .status(404)
+                .json({ success: false, message: 'Tutor not found' })
         }
+
+        const job = await prisma.job.findUnique({
+            where: {
+                id: id,
+            },
+        })
+
+        if (!job || job.status !== 'PENDING') {
+            return res
+                .status(405)
+                .json({ success: false, message: 'Job is closed' })
+            // job closed
+        }
+        // if tutor is in the job, return error
+        if (job.tutors.find((t) => t.id === tutor.id)) {
+            return res
+                .status(403)
+                .json({ success: false, message: 'Tutor already applied' })
+        }
+
         const tutorId = tutor.id
         console.log({ id, tutorId, tutor })
         const updatedUser = await prisma.job.update({
