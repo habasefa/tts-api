@@ -90,6 +90,9 @@ exports.getTutorByTelegramId = async (req, res, next) => {
     try {
         const tutor = await prisma.tutor.findFirst({
             where: { telegramId: +telegramId },
+            include: {
+                jobs: true,
+            },
         })
 
         console.log(tutor)

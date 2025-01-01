@@ -79,6 +79,7 @@ exports.updateJob = async (req, res, next) => {
 }
 
 exports.closeJob = async (req, res, next) => {
+    const { id } = req.params
     try {
         const user = await prisma.job.update({
             where: {
@@ -91,12 +92,14 @@ exports.closeJob = async (req, res, next) => {
                 tutors: true,
             },
         })
+        console.log('close job: ', user)
         if (user) {
             res.json({ success: true, message: `job ${id}`, job: user })
         } else {
             res.status(404).json({ success: false, message: `job not found` })
         }
     } catch (error) {
+        console.log(error)
         next(error)
     }
 }
@@ -122,6 +125,9 @@ exports.applyJob = async (req, res, next) => {
             where: {
                 id: id,
             },
+            include: {
+                tutors: true,
+            },
         })
 
         if (!job || job.status !== 'PENDING') {
@@ -131,6 +137,7 @@ exports.applyJob = async (req, res, next) => {
             // job closed
         }
         // if tutor is in the job, return error
+
         if (job.tutors.find((t) => t.id === tutor.id)) {
             return res
                 .status(403)
