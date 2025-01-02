@@ -69,7 +69,7 @@ exports.updateJob = async (req, res, next) => {
             },
         })
         if (user) {
-            res.json({ success: true, message: `job ${id}`, user: user })
+            res.json({ success: true, message: `job ${id}`, job: user })
         } else {
             res.json({ success: false, message: `job not found` })
         }
@@ -175,7 +175,11 @@ exports.deleteJob = async (req, res, next) => {
                 id: id,
             },
         })
-        res.json({ success: true, message: `Deleted job ${id}`, deletedUser })
+        res.json({
+            success: true,
+            message: `Deleted job ${id}`,
+            job: deletedUser,
+        })
     } catch (error) {
         next(error)
     }
